@@ -1,0 +1,630 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  USER
+  CONSULTANT
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum IpType {
+  TRADEMARK
+  COPYRIGHT
+  PATENT
+}
+
+enum TaxReturnStatus {
+  DRAFT
+  IN_REVIEW
+  SUBMITTED
+  ACCEPTED
+  REJECTED
+  REQUIRES_INFO
+}
+
+enum NtnStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum GstStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum ConsultationStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ConsultationType {
+  CHAT
+  CALL
+  EMAIL
+  VIDEO
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  JAZZCASH
+  EASYPAISA
+  CARD
+  BANK_TRANSFER
+}
+
+enum NotificationType {
+  TAX_DEADLINE
+  RETURN_STATUS
+  PAYMENT
+  CONSULTATION
+  SYSTEM
+  REFERRAL
+  FBR_NOTICE
+}
+
+model User {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  password        String
+  name            String?
+  phone           String?
+  role            UserRole  @default(USER)
+  isEmailVerified Boolean   @default(false)
+  isPhoneVerified Boolean   @default(false)
+  isActive        Boolean   @default(true)
+  referralCode    String    @unique
+  referredBy      String?
+  language        String    @default("en")
+  themeSettings   Json?
+  lastLoginAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  profiles        Profile[]
+  taxReturns      TaxReturn[]
+  assignedReturns TaxReturn[]          @relation("ConsultantAssignments")
+  ntnRegistrations NtnRegistration[]
+  gstRegistrations GstRegistration[]
+  salesTaxReturns SalesTaxReturn[]
+  salesTaxNotices SalesTaxNotice[]
+  withholdingTaxes WithholdingTax[]
+  fbrNotices      FbrNotice[]
+  secpRegistrations SecpRegistration[]
+  ipRegistrations IpRegistration[]
+  consultations   Consultation[]          @relation("UserConsultations")
+  consultantConsultations Consultation[]  @relation("ConsultantConsultations")
+  payments        Payment[]
+  referralsGiven  Referral[]              @relation("Referrer")
+  notifications   Notification[]
+  documents       Document[]
+  expenses        Expense[]
+  blogPosts       BlogPost[]
+  auditLogs       AuditLog[]
+  activityLogs    ActivityLog[]
+  passwordResetTokens PasswordResetToken[]
+  otpCodes        OtpCode[]
+  usaServices     UsaService[]
+
+  @@index([email])
+  @@index([role])
+  @@index([referralCode])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+}
+
+model OtpCode {
+  id        String   @id @default(uuid())
+  target    String
+  code      String
+  type      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+
+  @@index([target, type])
+}
+
+model UsaService {
+  id          String   @id @default(uuid())
+  userId      String
+  serviceType String
+  companyName String?
+  state       String?
+  status      String   @default("PENDING")
+  ein         String?
+  itin        String?
+  llcNumber   String?
+  bankAccount String?
+  documents   Json?
+  notes       String?
+  fee         Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Profile {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  cnic        String?
+  dob         DateTime?
+  fatherName  String?
+  address     String?
+  city        String?
+  province    String?
+  phone       String?
+  email       String?
+  employer    String?
+  gender      String?
+  designation String?
+  salary      Float?
+  bankName    String?
+  iban        String?
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taxReturns TaxReturn[]
+
+  @@index([userId])
+  @@index([cnic])
+}
+
+model TaxReturn {
+  id              String   @id @default(uuid())
+  userId          String
+  profileId       String?
+  taxYear         Int
+  returnType      String
+  income          Json?
+  deductions      Json?
+  assets          Json?
+  liabilities     Json?
+  totalIncome     Float?
+  totalDeductions Float?
+  taxableIncome   Float?
+  taxPayable      Float?
+  status          TaxReturnStatus @default(DRAFT)
+  fbrReference    String?
+  consultantId    String?
+  consultantNotes String?
+  filedDate       DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile         Profile? @relation(fields: [profileId], references: [id])
+  consultant      User?    @relation("ConsultantAssignments", fields: [consultantId], references: [id])
+
+  @@index([userId])
+  @@index([profileId])
+  @@index([taxYear])
+  @@index([status])
+  @@index([consultantId])
+}
+
+model NtnRegistration {
+  id         String   @id @default(uuid())
+  userId     String
+  ntnType    String
+  cnic       String
+  fullName   String
+  fatherName String?
+  dob        DateTime?
+  address    String?
+  city       String?
+  province   String?
+  phone      String?
+  email      String?
+  status     NtnStatus @default(PENDING)
+  ntnNumber  String?
+  documents  Json?
+  fee        Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([cnic])
+  @@index([status])
+}
+
+model GstRegistration {
+  id              String   @id @default(uuid())
+  userId          String
+  businessName    String
+  businessType    String?
+  ntnNumber       String?
+  cnic            String?
+  phone           String?
+  email           String?
+  address         String?
+  annualTurnover  Float?
+  natureOfBusiness String?
+  status          GstStatus @default(PENDING)
+  strn            String?
+  documents       Json?
+  fee             Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model SalesTaxReturn {
+  id               String   @id @default(uuid())
+  userId           String
+  gstRegistrationId String?
+  periodMonth      Int
+  periodYear       Int
+  strn             String?
+  totalSales       Float?
+  taxPayable       Float?
+  status           TaxReturnStatus @default(DRAFT)
+  acknowledgementNo String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([periodYear, periodMonth])
+  @@index([status])
+}
+
+model SalesTaxNotice {
+  id         String   @id @default(uuid())
+  userId     String
+  noticeNumber String
+  type       String
+  period     String?
+  amount     Float?
+  dueDate    DateTime?
+  status     String   @default("PENDING")
+  document   String?
+  response   String?
+  consultantId String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model WithholdingTax {
+  id             String   @id @default(uuid())
+  userId         String
+  taxYear        Int
+  statementType  String?
+  source         String?
+  totalDeducted  Float?
+  status         String   @default("PENDING")
+  certificate    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([taxYear])
+}
+
+model FbrNotice {
+  id           String    @id @default(uuid())
+  userId       String
+  noticeNumber String
+  type         String
+  taxYear      Int?
+  issueDate    DateTime?
+  dueDate      DateTime?
+  amount       Float?
+  status       String    @default("PENDING")
+  urgency      String    @default("medium")
+  description  String?
+  document     String?
+  response     String?
+  consultantId String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model SecpRegistration {
+  id               String   @id @default(uuid())
+  userId           String
+  companyType      String?
+  companyNames     Json?
+  address          String?
+  city             String?
+  paidUpCapital    Float?
+  natureOfBusiness String?
+  directors        Json?
+  status           String   @default("PENDING")
+  secpRefNumber    String?
+  fee              Float?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model IpRegistration {
+  id        String   @id @default(uuid())
+  userId    String
+  type      IpType
+  formData  Json?
+  status    String   @default("PENDING")
+  fee       Float?
+  refNumber String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+}
+
+model Consultation {
+  id           String   @id @default(uuid())
+  userId       String
+  consultantId String?
+  type         ConsultationType
+  subject      String?
+  description  String?
+  scheduledAt  DateTime?
+  status       ConsultationStatus @default(PENDING)
+  rating       Int?
+  review       String?
+  meetingLink  String?
+  fee          Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation("UserConsultations", fields: [userId], references: [id], onDelete: Cascade)
+  consultant   User?    @relation("ConsultantConsultations", fields: [consultantId], references: [id])
+
+  @@index([userId])
+  @@index([consultantId])
+  @@index([status])
+}
+
+model Payment {
+  id          String   @id @default(uuid())
+  userId      String
+  serviceType String
+  serviceId   String?
+  amount      Float
+  method      PaymentMethod
+  status      PaymentStatus @default(PENDING)
+  gatewayRef  String?
+  refundReason String?
+  refundedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([serviceType])
+}
+
+model Referral {
+  id           String   @id @default(uuid())
+  referrerId   String
+  refereeEmail String
+  status       String   @default("PENDING")
+  reward       Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  referrer     User     @relation("Referrer", fields: [referrerId], references: [id], onDelete: Cascade)
+
+  @@index([referrerId])
+  @@index([refereeEmail])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+model Document {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  type      String?
+  fileUrl   String?
+  taxYear   Int?
+  notes     String?
+  fileSize  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+}
+
+model Expense {
+  id          String   @id @default(uuid())
+  userId      String
+  category    String
+  amount      Float
+  date        DateTime
+  description String?
+  receipt     String?
+  tags        Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category])
+  @@index([date])
+}
+
+model BlogPost {
+  id           String   @id @default(uuid())
+  title        String
+  slug         String   @unique
+  content      String?
+  category     String?
+  tags         Json?
+  coverImage   String?
+  excerpt      String?
+  metaTitle    String?
+  metaDescription String?
+  readingTime  Int?
+  status       String   @default("DRAFT")
+  authorId     String?
+  views        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  author       User?    @relation(fields: [authorId], references: [id])
+
+  @@index([slug])
+  @@index([status])
+  @@index([category])
+}
+
+model Video {
+  id          String   @id @default(uuid())
+  youtubeId   String   @unique
+  title       String
+  titleUrdu   String?
+  description String?
+  category    String?
+  tags        Json?
+  thumbnail   String?
+  views       Int      @default(0)
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([youtubeId])
+  @@index([category])
+  @@index([isPublished])
+}
+
+model Faq {
+  id          String   @id @default(uuid())
+  question    String
+  answer      String
+  category    String?
+  order       Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([order])
+}
+
+model SiteSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  details   Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([entity])
+  @@index([createdAt])
+}
+
+model ActivityLog {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
