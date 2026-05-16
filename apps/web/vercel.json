@@ -1,4 +1,7 @@
 {
+  "installCommand": "npm install -g pnpm@8 --silent && cd ../.. && pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

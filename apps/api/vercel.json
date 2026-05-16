@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "installCommand": "npm install -g pnpm@8 --silent && cd ../.. && pnpm install --frozen-lockfile",
+  "buildCommand": "npx prisma generate",
   "builds": [
     {
       "src": "api/index.ts",
