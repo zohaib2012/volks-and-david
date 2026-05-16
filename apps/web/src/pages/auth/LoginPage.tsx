@@ -38,7 +38,12 @@ export default function LoginPage() {
       const res = await login(data.email, data.password);
       if (res.success) {
         toast.success("Welcome back!");
-        navigate("/dashboard");
+        const role = res.data.user?.role;
+        if (role === "ADMIN" || role === "SUPER_ADMIN") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
         toast.error(res.message || "Invalid credentials");
       }
