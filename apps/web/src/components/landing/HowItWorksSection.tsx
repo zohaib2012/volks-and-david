@@ -8,24 +8,24 @@ const steps = [
     icon: User,
     title: "Create Account",
     description: "Sign up free in under 2 minutes. No paperwork, no office visit needed.",
-    color: "#60A5FA",
-    bg: "rgba(79,111,245,0.12)",
+    color: "#3B5C9E",
+    bg: "rgba(59,92,158,0.12)",
   },
   {
     number: "02",
     icon: FileText,
     title: "Fill Your Details",
     description: "Answer simple questions. Our smart form auto-calculates your taxes instantly.",
-    color: "#A78BFA",
-    bg: "rgba(139,92,246,0.12)",
+    color: "#C8952E",
+    bg: "rgba(200,149,46,0.12)",
   },
   {
     number: "03",
     icon: CheckCircle,
     title: "Get It Filed!",
     description: "We review, file & send you confirmation. Download your tax certificate instantly.",
-    color: "#34D399",
-    bg: "rgba(16,185,129,0.12)",
+    color: "#3B5C9E",
+    bg: "rgba(59,92,158,0.12)",
   },
 ]
 
@@ -47,7 +47,7 @@ export default function HowItWorksSection() {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
             File Your Taxes in{" "}
             <span className="bg-clip-text text-transparent"
-              style={{ backgroundImage: "linear-gradient(135deg, hsl(228 88% 62%), hsl(160 84% 39%))" }}>
+              style={{ backgroundImage: "linear-gradient(135deg, #21346E, #C8952E)" }}>
               3 Easy Steps
             </span>
           </h2>
@@ -114,8 +114,8 @@ export default function HowItWorksSection() {
             to="/register"
             className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-bold text-white transition-all hover:opacity-90 hover:shadow-xl"
             style={{
-              background: "linear-gradient(135deg, hsl(228 88% 62%), hsl(160 84% 39%))",
-              boxShadow: "0 4px 24px hsl(228 88% 62% / 0.3)",
+            background: "linear-gradient(135deg, #21346E, #C8952E)",
+            boxShadow: "0 4px 24px rgba(33,52,110,0.3)",
             }}
           >
             Get Started Now — It's Free

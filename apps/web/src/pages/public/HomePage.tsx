@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import {
   MessageCircle, ArrowRight, Star,
   ShieldCheck, Building2, Clock, FileCheck, TrendingUp, Zap,
-  Quote as QuoteIcon, Mail, Sparkles,
+  Quote as QuoteIcon, Mail, Sparkles, Globe, ChevronRight,
 } from 'lucide-react'
 
 import HeroSection from '@/components/landing/HeroSection'
@@ -23,11 +23,126 @@ import { Badge } from '@/components/ui/badge'
 
 const pageUrl = 'https://volksanddavid.com'
 
+/* ─── USA Services Highlight Section ─── */
+const usaServices = [
+  { title: 'LLC Formation', desc: 'Register your US company from Pakistan — 100% online', price: 'From $399', icon: Building2 },
+  { title: 'EIN Application', desc: 'Employer Identification Number for your US business', price: 'From $99', icon: FileCheck },
+  { title: 'ITIN Application', desc: 'Individual Taxpayer Identification Number for non-residents', price: 'From $199', icon: ShieldCheck },
+  { title: 'US Bank Account', desc: 'Open a US bank account remotely for your business', price: 'From $0', icon: TrendingUp },
+]
+
+function USAServicesHighlightSection() {
+  return (
+    <section className="py-24 relative overflow-hidden">
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #0A1628 0%, #0D1F3C 50%, #0A1628 100%)' }} />
+      <div className="absolute inset-0 opacity-20"
+        style={{ background: 'radial-gradient(ellipse at 30% 40%, #21346E 0%, transparent 55%)' }} />
+      <div className="absolute inset-0 opacity-20"
+        style={{ background: 'radial-gradient(ellipse at 70% 60%, #C8952E 0%, transparent 55%)' }} />
+      <div className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
+        }} />
+      <motion.div
+        className="absolute w-80 h-80 rounded-full opacity-15 blur-3xl pointer-events-none"
+        style={{ background: '#21346E', top: '5%', right: '20%' }}
+        animate={{ x: [0, 20, 0], y: [0, -15, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute w-60 h-60 rounded-full opacity-15 blur-3xl pointer-events-none"
+        style={{ background: '#C8952E', bottom: '15%', left: '10%' }}
+        animate={{ x: [0, -20, 0], y: [0, 15, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+      />
+      <div className="container relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6 }}
+          className="text-center space-y-4 mb-14"
+        >
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#C8952E]/30 bg-[#C8952E]/10 px-4 py-1.5">
+            <Globe className="h-3.5 w-3.5 text-[#C8952E]" />
+            <span className="text-xs font-semibold text-[#C8952E]">USA SERVICES</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white">
+            Expand to the{' '}
+            <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, #3B5C9E, #C8952E)' }}>
+              US Market
+            </span>
+          </h2>
+          <p className="text-white/60 max-w-2xl mx-auto text-lg leading-relaxed">
+            Complete USA business setup services for Pakistani entrepreneurs, freelancers, and businesses.
+            We handle everything from company formation to tax compliance.
+          </p>
+        </motion.div>
+
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"
+        >
+          {usaServices.map((service, i) => (
+            <motion.div
+              key={service.title}
+              variants={staggerItem}
+              className="group relative rounded-2xl border border-white/10 overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+              style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)' }}
+            >
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ background: 'radial-gradient(circle at 50% 80%, rgba(200,149,46,0.12), transparent 65%)' }} />
+              <div className="relative z-10 p-6 flex flex-col h-full">
+                <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-4"
+                  style={{ background: 'rgba(200,149,46,0.12)' }}>
+                  <service.icon className="h-6 w-6 text-[#C8952E]" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">{service.title}</h3>
+                <p className="text-sm text-white/50 leading-relaxed flex-1 mb-4">{service.desc}</p>
+                <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                  <span className="text-sm font-bold text-[#C8952E]">{service.price}</span>
+                  <span className="text-xs text-white/30 group-hover:text-[#C8952E] transition-colors flex items-center gap-1">
+                    Learn More <ChevronRight className="h-3 w-3" />
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="text-center mt-12"
+        >
+          <Link
+            to="/usa-services"
+            className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-bold text-white transition-all hover:opacity-90 hover:shadow-xl"
+            style={{
+              background: 'linear-gradient(135deg, #C8952E 0%, #B8862B 100%)',
+              boxShadow: '0 4px 24px rgba(200,149,46,0.3)',
+            }}
+          >
+            Explore All USA Services
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: 'Volks & David',
-  image: 'https://volksanddavid.com/og-image.png',
+  image: '/volksanddavid.png',
   url: pageUrl,
   telephone: '+92 302 2999904',
   email: 'info@volksanddavid.com',
@@ -89,8 +204,8 @@ function WhatsAppFloat() {
 
 /* ─── Trusted By / Client Logos ─── */
 const clients = [
-  { initials: 'TC', name: 'TechCorp', color: '#4F6FF5' },
-  { initials: 'GS', name: 'GlobalSol', color: '#10B981' },
+  { initials: 'TC', name: 'TechCorp', color: '#21346E' },
+  { initials: 'GS', name: 'GlobalSol', color: '#C8952E' },
   { initials: 'AB', name: 'AlphaBiz', color: '#F59E0B' },
   { initials: 'PL', name: 'PrimeLegal', color: '#8B5CF6' },
   { initials: 'SF', name: 'SkyFin', color: '#EC4899' },
@@ -140,12 +255,12 @@ function TrustedBySection() {
 
 /* ─── Why Choose Us ─── */
 const reasons = [
-  { icon: ShieldCheck, title: 'FBR Registered', desc: 'Authorised tax intermediary by the Federal Board of Revenue, Pakistan', color: '#4F6FF5' },
-  { icon: Building2, title: 'SECP Partner', desc: 'Registered partner with Securities & Exchange Commission of Pakistan', color: '#10B981' },
-  { icon: Clock, title: '10+ Years Experience', desc: 'Serving individuals & businesses since 2014 with excellence', color: '#8B5CF6' },
-  { icon: FileCheck, title: '5000+ Returns Filed', desc: 'Thousands of satisfied clients across all major Pakistani cities', color: '#F59E0B' },
-  { icon: TrendingUp, title: '98% Success Rate', desc: 'Industry-leading success rate for all tax & business filings', color: '#EC4899' },
-  { icon: Zap, title: 'Same Day Service', desc: 'Most services completed within 24 hours — guaranteed turnaround', color: '#06B6D4' },
+  { icon: ShieldCheck, title: 'FBR Registered', desc: 'Authorised tax intermediary by the Federal Board of Revenue, Pakistan', color: '#21346E' },
+  { icon: Building2, title: 'SECP Partner', desc: 'Registered partner with Securities & Exchange Commission of Pakistan', color: '#C8952E' },
+  { icon: Clock, title: '10+ Years Experience', desc: 'Serving individuals & businesses since 2014 with excellence', color: '#3B5C9E' },
+  { icon: FileCheck, title: '5000+ Returns Filed', desc: 'Thousands of satisfied clients across all major Pakistani cities', color: '#2C4182' },
+  { icon: TrendingUp, title: '98% Success Rate', desc: 'Industry-leading success rate for all tax & business filings', color: '#D4A84B' },
+  { icon: Zap, title: 'Same Day Service', desc: 'Most services completed within 24 hours — guaranteed turnaround', color: '#B8862B' },
 ]
 
 function WhyChooseUsSection() {
@@ -166,7 +281,7 @@ function WhyChooseUsSection() {
           <Badge variant="premium" className="px-4 py-1 text-xs">Why Choose Us</Badge>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
             The{' '}
-            <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, hsl(228 88% 62%), hsl(160 84% 39%))' }}>
+            <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, #21346E, #C8952E)' }}>
               ProFit
             </span>{' '}
             Difference
@@ -211,11 +326,11 @@ function WhyChooseUsSection() {
 const caseStudies = [
   {
     quote: 'Volks & David structured our entire tax strategy from scratch. We saved over Rs. 2.5M in our first year alone — more than we ever expected.',
-    metric: 'Rs. 2.5M', metricLabel: 'Tax Savings', industry: 'Startup / SaaS', tag: 'Tax Planning', accent: '#4F6FF5',
+    metric: 'Rs. 2.5M', metricLabel: 'Tax Savings', industry: 'Startup / SaaS', tag: 'Tax Planning', accent: '#21346E',
   },
   {
     quote: 'We needed our SECP registration completed urgently. They delivered the certificate in less than 24 hours — absolutely incredible service.',
-    metric: '24 Hours', metricLabel: 'Turnaround', industry: 'E-Commerce', tag: 'Business Setup', accent: '#10B981',
+    metric: '24 Hours', metricLabel: 'Turnaround', industry: 'E-Commerce', tag: 'Business Setup', accent: '#C8952E',
   },
   {
     quote: 'Our trademark was registered in just 60 days. The team handled all filings, objections, and follow-ups. Completely hassle-free experience.',
@@ -226,9 +341,9 @@ const caseStudies = [
 function CaseStudiesSection() {
   return (
     <section className="py-24 relative overflow-hidden">
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, hsl(220 25% 96%), hsl(220 25% 98%) 50%, hsl(220 25% 96%))' }} />
-      <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
-        style={{ backgroundImage: 'radial-gradient(circle at 25% 50%, #4F6FF5 0%, transparent 50%), radial-gradient(circle at 75% 50%, #10B981 0%, transparent 50%)' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, #F0F2F8, #F5F6FA 50%, #F0F2F8)' }} />
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{ backgroundImage: 'radial-gradient(circle at 25% 50%, #21346E 0%, transparent 50%), radial-gradient(circle at 75% 50%, #C8952E 0%, transparent 50%)' }} />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
       <div className="container relative z-10">
         <motion.div
@@ -241,7 +356,7 @@ function CaseStudiesSection() {
           <Badge variant="success" className="px-4 py-1 text-xs">Success Stories</Badge>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
             Real Results,{' '}
-            <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, hsl(228 88% 62%), hsl(160 84% 39%))' }}>
+            <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, #21346E, #C8952E)' }}>
               Real Impact
             </span>
           </h2>
@@ -305,8 +420,8 @@ function EmailCTASection() {
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 bg-[#030B1A]" />
-      <div className="absolute inset-0 opacity-25" style={{ background: 'radial-gradient(ellipse at 30% 40%, #4F6FF5, transparent 55%)' }} />
-      <div className="absolute inset-0 opacity-20" style={{ background: 'radial-gradient(ellipse at 70% 60%, #10B981, transparent 55%)' }} />
+      <div className="absolute inset-0 opacity-30" style={{ background: 'radial-gradient(ellipse at 30% 40%, #21346E, transparent 55%)' }} />
+      <div className="absolute inset-0 opacity-25" style={{ background: 'radial-gradient(ellipse at 70% 60%, #C8952E, transparent 55%)' }} />
       <div className="absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
@@ -314,13 +429,13 @@ function EmailCTASection() {
         }} />
       <motion.div
         className="absolute w-72 h-72 rounded-full opacity-10 blur-3xl pointer-events-none"
-        style={{ background: '#4F6FF5', top: '10%', right: '15%' }}
+        style={{ background: '#21346E', top: '10%', right: '15%' }}
         animate={{ x: [0, 25, 0], y: [0, -15, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
         className="absolute w-56 h-56 rounded-full opacity-10 blur-3xl pointer-events-none"
-        style={{ background: '#10B981', bottom: '15%', left: '10%' }}
+        style={{ background: '#C8952E', bottom: '15%', left: '10%' }}
         animate={{ x: [0, -20, 0], y: [0, 15, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
       />
@@ -333,13 +448,13 @@ function EmailCTASection() {
           className="max-w-3xl mx-auto text-center space-y-8"
         >
           <div className="space-y-5">
-            <Badge variant="premium" className="px-4 py-1 text-xs border-emerald-500/30 text-emerald-300 bg-emerald-500/10">
+            <Badge variant="premium" className="px-4 py-1 text-xs border-[#C8952E]/30 text-[#C8952E] bg-[#C8952E]/10">
               <Sparkles className="h-3 w-3 mr-1" />
               Get Started Today
             </Badge>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
               Ready to Get{' '}
-              <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, #60A5FA, #34D399)' }}>
+              <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, #3B5C9E, #C8952E)' }}>
                 Started?
               </span>
             </h2>
@@ -355,15 +470,15 @@ function EmailCTASection() {
                 <Input
                   type="email"
                   placeholder="Enter your email address"
-                  className="h-14 pl-11 text-base bg-white/5 border-white/10 text-white placeholder:text-white/30 rounded-xl focus-visible:border-emerald-500/50"
+                  className="h-14 pl-11 text-base bg-white/5 border-white/10 text-white placeholder:text-white/30 rounded-xl focus-visible:border-[#C8952E]/50"
                 />
               </div>
               <Button
                 size="lg"
                 className="h-14 px-7 text-base font-bold text-white border-0 rounded-xl shrink-0"
                 style={{
-                  background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                  boxShadow: '0 8px 32px rgba(16, 185, 129, 0.4)',
+                  background: 'linear-gradient(135deg, #C8952E 0%, #B8862B 100%)',
+                  boxShadow: '0 8px 32px rgba(200, 149, 46, 0.4)',
                 }}
               >
                 Get Started
@@ -381,7 +496,7 @@ function EmailCTASection() {
               { icon: Star, text: '4.8★ Rated' },
             ].map(({ icon: Icon, text }) => (
               <div key={text} className="flex items-center gap-2 text-sm text-white/40">
-                <Icon className="h-4 w-4 text-emerald-400" />
+                <Icon className="h-4 w-4 text-[#C8952E]" />
                 {text}
               </div>
             ))}
@@ -407,7 +522,7 @@ export default function HomePage() {
         <meta property="og:title" content={title} />
         <meta property="og:description" content={desc} />
         <meta property="og:url" content={pageUrl} />
-        <meta property="og:image" content="https://volksanddavid.com/og-image.png" />
+        <meta property="og:image" content="/volksanddavid.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={desc} />
@@ -421,6 +536,7 @@ export default function HomePage() {
       <WhyChooseUsSection />
       <CaseStudiesSection />
       <HowItWorksSection />
+      <USAServicesHighlightSection />
       <PricingSection />
       <TestimonialsSection />
       <BlogPreviewSection />

@@ -107,8 +107,8 @@ export default function ExitIntentPopup() {
 
             {success ? (
               <div className="flex flex-col items-center text-center py-4 space-y-4">
-                <div className="h-16 w-16 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                  <CheckCircle className="h-8 w-8 text-emerald-500" />
+                <div className="h-16 w-16 rounded-full bg-[#C8952E]/10 flex items-center justify-center">
+                  <CheckCircle className="h-8 w-8 text-[#C8952E]" />
                 </div>
                 <h3 className="text-xl font-bold">Offer Claimed!</h3>
                 <p className="text-sm text-muted-foreground">

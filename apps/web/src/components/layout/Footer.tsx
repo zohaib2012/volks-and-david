@@ -44,9 +44,7 @@ export default function Footer() {
           {/* Brand + Newsletter */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
-                V&D
-              </div>
+              <img src="/volksanddavid-logo.svg" alt="Volks & David" className="h-9 w-auto" />
               <span className="text-xl font-bold">
                 Volks <span className="text-primary">&</span> David
               </span>

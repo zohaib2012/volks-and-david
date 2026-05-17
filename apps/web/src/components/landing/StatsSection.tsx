@@ -12,8 +12,8 @@ interface Stat {
 }
 
 const stats: Stat[] = [
-  { icon: FileText, value: "500", suffix: "K+", label: "Returns Filed", sublabel: "Tax Year 2024-25", color: "#60A5FA" },
-  { icon: BadgeCheck, value: "200", suffix: "K+", label: "NTNs Registered", sublabel: "Active & verified", color: "#34D399" },
+  { icon: FileText, value: "500", suffix: "K+", label: "Returns Filed", sublabel: "Tax Year 2024-25", color: "#3B5C9E" },
+  { icon: BadgeCheck, value: "200", suffix: "K+", label: "NTNs Registered", sublabel: "Active & verified", color: "#C8952E" },
   { icon: Wallet, value: "2", suffix: "B+", label: "Tax Saved (PKR)", sublabel: "Our clients' savings", color: "#FBBF24" },
   { icon: Users, value: "50", suffix: "K+", label: "Happy Clients", sublabel: "Nationwide", color: "#A78BFA" },
   { icon: Star, value: "4.8", suffix: "", label: "Avg. Rating", sublabel: "Google & Facebook", color: "#FB923C" },
@@ -58,10 +58,10 @@ export default function StatsSection() {
       {/* Background */}
       <div className="absolute inset-0"
         style={{ background: "linear-gradient(135deg, #0A1628 0%, #0D1F3C 50%, #0A1628 100%)" }} />
+      <div className="absolute inset-0 opacity-25"
+        style={{ background: "radial-gradient(ellipse at 30% 50%, #21346E 0%, transparent 60%)" }} />
       <div className="absolute inset-0 opacity-20"
-        style={{ background: "radial-gradient(ellipse at 30% 50%, #4F6FF5 0%, transparent 60%)" }} />
-      <div className="absolute inset-0 opacity-15"
-        style={{ background: "radial-gradient(ellipse at 70% 50%, #10B981 0%, transparent 60%)" }} />
+        style={{ background: "radial-gradient(ellipse at 70% 50%, #C8952E 0%, transparent 60%)" }} />
       <div className="absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
@@ -79,7 +79,7 @@ export default function StatsSection() {
           <p className="text-xs font-semibold tracking-widest text-emerald-400 uppercase mb-3">Trusted by Thousands</p>
           <h2 className="text-3xl sm:text-4xl font-black text-white">
             Numbers That{" "}
-            <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(135deg, #60A5FA, #34D399)" }}>
+            <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(135deg, #3B5C9E, #C8952E)" }}>
               Speak for Themselves
             </span>
           </h2>

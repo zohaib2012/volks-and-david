@@ -359,3 +359,24 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+@keyframes blink-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.animate-blink-dot { animation: blink-dot 1.2s ease-in-out infinite; }
+
+.public-theme {
+  --primary: 225 54% 28%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 40 65% 48%;
+  --accent-foreground: 0 0% 100%;
+}
+
+.dark .public-theme {
+  --primary: 225 54% 32%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 40 65% 52%;
+  --accent-foreground: 0 0% 100%;
+}

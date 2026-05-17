@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   AlertCircle,
   ArrowRight,
+  Sparkles,
 } from "lucide-react"
 
 interface Service {
@@ -67,9 +68,9 @@ const services: Service[] = [
     title: "USA Services",
     description: "LLC formation, EIN, ITIN & US bank account for Pakistanis doing global business.",
     path: "/services/usa",
-    gradient: "from-rose-500/8 to-rose-600/4",
-    iconBg: "rgba(244,63,94,0.15)",
-    iconColor: "#FB7185",
+    gradient: "from-[#21346E]/10 to-[#C8952E]/10",
+    iconBg: "rgba(200,149,46,0.15)",
+    iconColor: "#C8952E",
     tag: "New",
   },
   {
@@ -123,7 +124,7 @@ export default function ServicesSection() {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
             Complete{" "}
             <span className="bg-clip-text text-transparent"
-              style={{ backgroundImage: "linear-gradient(135deg, hsl(228 88% 62%), hsl(160 84% 39%))" }}>
+              style={{ backgroundImage: "linear-gradient(135deg, #21346E, #C8952E)" }}>
               Financial Services
             </span>
           </h2>
@@ -152,12 +153,13 @@ export default function ServicesSection() {
 
                 {/* Popular/New tag */}
                 {service.tag && (
-                  <div className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full"
+                  <div className={`absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${service.tag === "New" ? "animate-pulse-border" : ""}`}
                     style={{
-                      background: service.tag === "New" ? "rgba(16,185,129,0.15)" : "rgba(79,111,245,0.12)",
-                      color: service.tag === "New" ? "#34D399" : "#818CF8",
-                      border: `1px solid ${service.tag === "New" ? "rgba(16,185,129,0.3)" : "rgba(79,111,245,0.2)"}`,
+                      background: service.tag === "New" ? "rgba(200,149,46,0.2)" : "rgba(33,52,110,0.12)",
+                      color: service.tag === "New" ? "#C8952E" : "#3B5C9E",
+                      border: `1px solid ${service.tag === "New" ? "rgba(200,149,46,0.5)" : "rgba(33,52,110,0.2)"}`,
                     }}>
+                    {service.tag === "New" && <Sparkles className="h-2.5 w-2.5 inline mr-0.5" />}
                     {service.tag}
                   </div>
                 )}

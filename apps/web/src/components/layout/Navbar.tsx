@@ -38,20 +38,11 @@ export default function Navbar() {
     )}>
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5">
-          <div
-            className="flex h-9 w-9 items-center justify-center rounded-xl font-black text-xs text-white shadow-md"
-            style={{ background: "linear-gradient(135deg, #4F6FF5, #10B981)" }}
-          >
-            V&D
-          </div>
+          <img src="/volksanddavid-logo.svg" alt="Volks & David" className="h-10 w-auto" />
           <span className="text-lg font-black tracking-tight">
-            <span style={{ background: "linear-gradient(135deg, #4F6FF5, #60A5FA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              Volks
-            </span>
+            <span className="text-[#21346E]">Volks</span>
             <span className="text-foreground/60 mx-0.5 font-light">&</span>
-            <span style={{ background: "linear-gradient(135deg, #10B981, #34D399)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              David
-            </span>
+            <span className="text-[#C8952E]">David</span>
           </span>
         </Link>
 
@@ -73,7 +64,7 @@ export default function Navbar() {
           {isAuthenticated ? (
             <Button
               className="text-white font-semibold shadow-md"
-              style={{ background: "linear-gradient(135deg, #4F6FF5, #10B981)", boxShadow: "0 4px 16px rgba(79,111,245,0.3)" }}
+              style={{ background: "linear-gradient(135deg, #21346E, #C8952E)", boxShadow: "0 4px 16px rgba(33,52,110,0.3)" }}
               onClick={() => navigate("/dashboard")}
             >
               Dashboard
@@ -83,7 +74,7 @@ export default function Navbar() {
               <Button variant="outline" className="font-semibold" onClick={() => navigate("/login")}>Login</Button>
               <Button
                 className="text-white font-semibold shadow-md hover:opacity-90 transition-opacity"
-                style={{ background: "linear-gradient(135deg, #10B981, #059669)", boxShadow: "0 4px 16px rgba(16,185,129,0.35)" }}
+                style={{ background: "linear-gradient(135deg, #C8952E, #B8862B)", boxShadow: "0 4px 16px rgba(200,149,46,0.35)" }}
                 onClick={() => navigate("/register")}
               >
                 Get Started

@@ -11,7 +11,7 @@ export default function PublicLayout() {
   const [leadFormOpen, setLeadFormOpen] = useState(false)
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="public-theme flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">
         <Outlet />

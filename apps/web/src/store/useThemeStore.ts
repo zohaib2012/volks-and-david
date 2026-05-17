@@ -9,7 +9,7 @@ interface ThemeStore {
 }
 
 const defaultTheme: ThemeConfig = {
-  primaryColor: '#4F6FF5',
+  primaryColor: '#21346E',
   primaryColorName: 'Navy Blue',
   mode: 'light',
   sidebarStyle: 'solid',

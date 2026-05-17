@@ -15,10 +15,10 @@ export default function CTASection() {
     <section className="py-24 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-[#030B1A]" />
+      <div className="absolute inset-0 opacity-30"
+        style={{ background: "radial-gradient(ellipse at 20% 50%, #21346E, transparent 55%)" }} />
       <div className="absolute inset-0 opacity-25"
-        style={{ background: "radial-gradient(ellipse at 20% 50%, #4F6FF5, transparent 55%)" }} />
-      <div className="absolute inset-0 opacity-20"
-        style={{ background: "radial-gradient(ellipse at 80% 50%, #10B981, transparent 55%)" }} />
+        style={{ background: "radial-gradient(ellipse at 80% 50%, #C8952E, transparent 55%)" }} />
       <div className="absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
@@ -28,13 +28,13 @@ export default function CTASection() {
       {/* Floating orbs */}
       <motion.div
         className="absolute w-64 h-64 rounded-full opacity-10 blur-3xl pointer-events-none"
-        style={{ background: "#4F6FF5", top: "20%", left: "10%" }}
+        style={{ background: "#21346E", top: "20%", left: "10%" }}
         animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
         className="absolute w-48 h-48 rounded-full opacity-10 blur-3xl pointer-events-none"
-        style={{ background: "#10B981", bottom: "20%", right: "10%" }}
+        style={{ background: "#C8952E", bottom: "20%", right: "10%" }}
         animate={{ x: [0, -25, 0], y: [0, 20, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
       />
@@ -49,13 +49,13 @@ export default function CTASection() {
         >
           {/* Heading */}
           <div className="space-y-5">
-            <p className="text-xs font-semibold tracking-widest text-emerald-400 uppercase">
+            <p className="text-xs font-semibold tracking-widest text-[#C8952E] uppercase">
               Join 500,000+ Pakistanis
             </p>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
               Ready to File Your{" "}
               <span className="bg-clip-text text-transparent"
-                style={{ backgroundImage: "linear-gradient(135deg, #60A5FA, #34D399)" }}>
+                style={{ backgroundImage: "linear-gradient(135deg, #3B5C9E, #C8952E)" }}>
                 Tax Return?
               </span>
             </h2>
@@ -69,7 +69,7 @@ export default function CTASection() {
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
             {perks.map((perk) => (
               <div key={perk} className="flex items-center gap-2 text-sm text-white/50">
-                <CheckCircle className="h-4 w-4 text-emerald-400 shrink-0" />
+                <CheckCircle className="h-4 w-4 text-[#C8952E] shrink-0" />
                 {perk}
               </div>
             ))}
@@ -81,10 +81,10 @@ export default function CTASection() {
               <Button
                 size="lg"
                 className="h-14 px-10 text-base font-bold text-white border-0"
-                style={{
-                  background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
-                  boxShadow: "0 8px 32px rgba(16, 185, 129, 0.4)",
-                }}
+                  style={{
+                    background: "linear-gradient(135deg, #C8952E 0%, #B8862B 100%)",
+                    boxShadow: "0 8px 32px rgba(200, 149, 46, 0.4)",
+                  }}
                 asChild
               >
                 <Link to="/register">
@@ -95,14 +95,12 @@ export default function CTASection() {
             </motion.div>
 
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-              <Button
-                size="lg"
-                className="h-14 px-10 text-base font-semibold border-white/15 text-white/80 hover:bg-white/8 hover:text-white hover:border-white/25 transition-all"
-                variant="outline"
-                asChild
+              <Link
+                to="/pricing"
+                className="inline-flex h-14 px-10 items-center justify-center rounded-md text-base font-semibold text-white border-2 border-white/40 bg-transparent hover:bg-white/10 hover:border-white/70 transition-all"
               >
-                <Link to="/pricing">View Pricing</Link>
-              </Button>
+                View Pricing
+              </Link>
             </motion.div>
           </div>
         </motion.div>

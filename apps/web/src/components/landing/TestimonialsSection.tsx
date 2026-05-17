@@ -54,12 +54,12 @@ const testimonials: Testimonial[] = [
 ]
 
 const avatarColors = [
-  { bg: "rgba(79,111,245,0.15)", color: "#60A5FA" },
-  { bg: "rgba(16,185,129,0.15)", color: "#34D399" },
-  { bg: "rgba(245,158,11,0.15)", color: "#FBBF24" },
-  { bg: "rgba(139,92,246,0.15)", color: "#A78BFA" },
-  { bg: "rgba(244,63,94,0.15)", color: "#FB7185" },
-  { bg: "rgba(6,182,212,0.15)", color: "#22D3EE" },
+  { bg: "rgba(33,52,110,0.15)", color: "#21346E" },
+  { bg: "rgba(200,149,46,0.15)", color: "#C8952E" },
+  { bg: "rgba(59,92,158,0.15)", color: "#3B5C9E" },
+  { bg: "rgba(212,168,75,0.15)", color: "#D4A84B" },
+  { bg: "rgba(44,65,130,0.15)", color: "#2C4182" },
+  { bg: "rgba(184,134,43,0.15)", color: "#B8862B" },
 ]
 
 function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
@@ -109,7 +109,7 @@ export default function TestimonialsSection() {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
             Trusted by{" "}
             <span className="bg-clip-text text-transparent"
-              style={{ backgroundImage: "linear-gradient(135deg, hsl(228 88% 62%), hsl(160 84% 39%))" }}>
+              style={{ backgroundImage: "linear-gradient(135deg, #21346E, #C8952E)" }}>
               50,000+ Clients
             </span>
           </h2>
