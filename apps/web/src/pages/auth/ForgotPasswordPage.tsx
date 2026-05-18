@@ -116,7 +116,7 @@ export default function ForgotPasswordPage() {
                       id="contact"
                       type={isEmail ? "email" : "tel"}
                       placeholder={
-                        isEmail ? "you@example.com" : "+1 (555) 000-0000"
+                        isEmail ? "you@example.com" : "number"
                       }
                       className="pl-10"
                       {...register("contact", {

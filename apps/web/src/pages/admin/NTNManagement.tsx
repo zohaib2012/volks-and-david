@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { AlertCircle, Eye, Search } from "lucide-react";
+import { AlertCircle, Eye, Search, FileText } from "lucide-react";
 import api from "@/lib/api";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -25,9 +25,17 @@ interface NtnRecord {
   ntnType: string;
   cnic: string;
   fullName: string;
+  fatherName: string | null;
+  dob: string | null;
+  address: string | null;
+  city: string | null;
+  province: string | null;
+  phone: string | null;
+  email: string | null;
   status: string;
   ntnNumber: string | null;
   fee: number | null;
+  documents: { cnicFrontFile?: string; cnicFrontUrl?: string; cnicBackFile?: string; cnicBackUrl?: string; addressFile?: string; addressUrl?: string; paymentId?: string } | null;
   createdAt: string;
 }
 
@@ -38,6 +46,27 @@ interface EditForm {
 }
 
 const statusOptions = ["PENDING", "UNDER_REVIEW", "APPROVED", "REJECTED"];
+
+function DocCard({ label, fileUrl, fileName }: { label: string; fileUrl?: string | null; fileName?: string | null }) {
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      {fileUrl ? (
+        <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="group block">
+          <div className="relative rounded-lg border border-border/60 overflow-hidden bg-background aspect-[4/3] flex items-center justify-center hover:border-primary/50 transition-colors">
+            <img src={fileUrl} alt={label} className="max-h-full max-w-full object-contain p-2" />
+          </div>
+          <p className="text-xs text-muted-foreground mt-1 group-hover:text-primary transition-colors truncate">{fileName}</p>
+        </a>
+      ) : (
+        <div className="flex items-center gap-2 p-3 rounded-lg border border-border/60">
+          <FileText className="h-5 w-5 text-muted-foreground shrink-0" />
+          <span className="text-xs text-muted-foreground truncate">{fileName || "Not uploaded"}</span>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function NTNManagement() {
   const queryClient = useQueryClient();
@@ -78,6 +107,12 @@ export default function NTNManagement() {
   const records = data?.data ?? [];
   const pagination = data?.pagination ?? { page: 1, limit, total: 0 };
 
+  const openDetail = (item: NtnRecord) => {
+    setEditForm({ status: item.status, ntnNumber: item.ntnNumber || "", fee: item.fee || 0 });
+    setDetailItem(item);
+    setDetailOpen(true);
+  };
+
   const openEdit = (item: NtnRecord) => {
     setEditForm({ status: item.status, ntnNumber: item.ntnNumber || "", fee: item.fee || 0 });
     setDetailItem(item);
@@ -99,9 +134,14 @@ export default function NTNManagement() {
     {
       key: "actions", header: "Actions",
       render: (item) => (
-        <Button variant="ghost" size="sm" onClick={() => openEdit(item)}>
-          <Eye className="h-4 w-4" />
-        </Button>
+        <div className="flex gap-1">
+          <Button variant="ghost" size="sm" onClick={() => openDetail(item)} title="View Details">
+            <Eye className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => openEdit(item)} title="Edit">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+          </Button>
+        </div>
       ),
     },
   ];
@@ -156,31 +196,72 @@ export default function NTNManagement() {
         <DataTable columns={columns} data={records} keyExtractor={(item) => item.id}
           pagination={pagination} onPageChange={setPage} emptyTitle="No NTN registrations found" />
       </div>
-      <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent className="sm:max-w-md rounded-xl">
-          <DialogHeader><DialogTitle>Update NTN Registration</DialogTitle></DialogHeader>
+      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+        <DialogContent className="sm:max-w-2xl rounded-xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>NTN Registration Details</DialogTitle></DialogHeader>
           {detailItem && (
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">User: {detailItem.fullName} ({detailItem.cnic})</p>
-              <div className="space-y-1.5">
-                <Label>Status</Label>
-                <select className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" value={editForm.status}
-                  onChange={(e) => setEditForm(p => ({ ...p, status: e.target.value }))}>
-                  {statusOptions.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-muted/30">
+                <div><Label className="text-xs text-muted-foreground">Full Name</Label><p className="font-medium">{detailItem.fullName}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Father Name</Label><p className="font-medium">{detailItem.fatherName || "-"}</p></div>
+                <div><Label className="text-xs text-muted-foreground">CNIC</Label><p className="font-medium">{detailItem.cnic}</p></div>
+                <div><Label className="text-xs text-muted-foreground">NTN Type</Label><p className="font-medium">{detailItem.ntnType}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Date of Birth</Label><p className="font-medium">{detailItem.dob ? formatDate(detailItem.dob) : "-"}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Phone</Label><p className="font-medium">{detailItem.phone || "-"}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Email</Label><p className="font-medium">{detailItem.email || detailItem.user?.email || "-"}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Status</Label><StatusBadge status={detailItem.status} /></div>
               </div>
-              <div className="space-y-1.5">
-                <Label>NTN Number</Label>
-                <Input value={editForm.ntnNumber} onChange={(e) => setEditForm(p => ({ ...p, ntnNumber: e.target.value }))} />
+              <div className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-muted/30">
+                <div className="col-span-2"><Label className="text-xs text-muted-foreground">Address</Label><p className="font-medium">{detailItem.address || "-"}</p></div>
+                <div><Label className="text-xs text-muted-foreground">City</Label><p className="font-medium">{detailItem.city || "-"}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Province</Label><p className="font-medium">{detailItem.province || "-"}</p></div>
               </div>
-              <div className="space-y-1.5">
-                <Label>Fee (PKR)</Label>
-                <Input type="number" value={editForm.fee} onChange={(e) => setEditForm(p => ({ ...p, fee: Number(e.target.value) }))} />
+              {detailItem.documents && (
+                <div className="space-y-3 p-4 rounded-lg bg-muted/30">
+                  <Label className="text-xs text-muted-foreground font-semibold">Uploaded Documents</Label>
+                  <div className="grid grid-cols-3 gap-4">
+                    <DocCard
+                      label="CNIC Front"
+                      fileUrl={detailItem.documents.cnicFrontUrl ?? (detailItem.documents as any).cnicUrl}
+                      fileName={detailItem.documents.cnicFrontFile ?? (detailItem.documents as any).cnicFile}
+                    />
+                    <DocCard
+                      label="CNIC Back"
+                      fileUrl={detailItem.documents.cnicBackUrl}
+                      fileName={detailItem.documents.cnicBackFile}
+                    />
+                    <DocCard
+                      label="Address Proof"
+                      fileUrl={detailItem.documents.addressUrl}
+                      fileName={detailItem.documents.addressFile}
+                    />
+                  </div>
+                </div>
+              )}
+              <div className="border-t pt-4">
+                <h4 className="text-sm font-semibold mb-3">Update Registration</h4>
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label>Status</Label>
+                    <select className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" value={editForm.status}
+                      onChange={(e) => setEditForm(p => ({ ...p, status: e.target.value }))}>
+                      {statusOptions.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>NTN Number</Label>
+                    <Input value={editForm.ntnNumber} onChange={(e) => setEditForm(p => ({ ...p, ntnNumber: e.target.value }))} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Fee (PKR)</Label>
+                    <Input type="number" value={editForm.fee} onChange={(e) => setEditForm(p => ({ ...p, fee: Number(e.target.value) }))} />
+                  </div>
+                </div>
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDetailOpen(false)}>Close</Button>
             <Button onClick={handleUpdate}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>

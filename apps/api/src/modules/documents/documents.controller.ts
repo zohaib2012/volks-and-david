@@ -3,6 +3,20 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import { success, error } from "../../utils/response";
 import { documentService } from "./documents.service";
 
+export const upload = asyncHandler(async (req: Request, res: Response) => {
+  const file = req.file as Express.Multer.File | undefined;
+  if (!file) return error(res, "No file uploaded", 400);
+  const record = await documentService.create(req.user!.userId, {
+    name: req.body.name || file.originalname,
+    type: req.body.type || null,
+    taxYear: req.body.taxYear || null,
+    notes: req.body.notes || null,
+    fileUrl: `/uploads/${file.filename}`,
+    fileSize: file.size,
+  });
+  return success(res, record, "Document uploaded", 201);
+});
+
 export const list = asyncHandler(async (req: Request, res: Response) => {
   const records = await documentService.list(req.user!.userId);
   return success(res, records);

@@ -58,17 +58,12 @@ const docTypes = [
 
 const taxYears = Array.from({ length: 10 }, (_, i) => String(2017 + i));
 
-const getFileIcon = (fileType?: string) => {
-  switch (fileType) {
-    case "pdf":
-      return <FileText className="h-10 w-10 text-red-500" />;
-    case "image":
-      return <FileImage className="h-10 w-10 text-blue-500" />;
-    case "spreadsheet":
-      return <FileSpreadsheet className="h-10 w-10 text-green-500" />;
-    default:
-      return <FileText className="h-10 w-10 text-muted-foreground" />;
-  }
+const getFileIcon = (fileUrl?: string | null) => {
+  const ext = fileUrl?.split(".").pop()?.toLowerCase();
+  if (ext === "pdf") return <FileText className="h-10 w-10 text-red-500" />;
+  if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext || "")) return <FileImage className="h-10 w-10 text-blue-500" />;
+  if (["xlsx", "xls", "csv"].includes(ext || "")) return <FileSpreadsheet className="h-10 w-10 text-green-500" />;
+  return <FileText className="h-10 w-10 text-muted-foreground" />;
 };
 
 const getTypeBadgeVariant = (type: string) => {
@@ -175,8 +170,10 @@ export default function DocumentVaultPage() {
       const a = document.createElement("a");
       a.href = doc.fileUrl;
       a.download = doc.name;
-      a.target = "_blank";
+      a.style.display = "none";
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
     } else {
       toast("No file URL available for this document", { icon: "ℹ️" });
     }
@@ -248,7 +245,7 @@ export default function DocumentVaultPage() {
               <Card className="h-full flex flex-col overflow-hidden group">
                 <CardContent className="p-4 flex-1 flex flex-col">
                   <div className="flex items-start justify-between mb-4">
-                    {getFileIcon(doc.fileType)}
+                    {getFileIcon(doc.fileUrl)}
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                       <Button
                         variant="ghost"
@@ -288,7 +285,7 @@ export default function DocumentVaultPage() {
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground mt-auto">
-                    {formatDate(doc.uploadDate || doc.createdAt)} · {doc.size || 0} KB
+                    {formatDate(doc.createdAt)} · {doc.fileSize ? Math.round(doc.fileSize / 1024) : doc.size || 0} KB
                   </p>
                 </CardContent>
               </Card>

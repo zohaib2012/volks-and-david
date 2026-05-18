@@ -144,7 +144,7 @@ export default function LeadCaptureForm({
               <Label htmlFor="name">Full Name</Label>
               <Input
                 id="name"
-                placeholder="John Doe"
+                placeholder="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className={cn(errors.name && 'border-destructive')}

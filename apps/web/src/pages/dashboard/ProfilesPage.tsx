@@ -331,7 +331,7 @@ export default function ProfilesPage() {
             <div className="space-y-2">
               <Label>Full Name *</Label>
               <Input
-                placeholder="John Doe"
+                placeholder="name"
                 value={form.name}
                 onChange={(e) =>
                   setForm((p) => ({ ...p, name: e.target.value }))

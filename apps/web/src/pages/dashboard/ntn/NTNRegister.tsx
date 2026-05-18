@@ -66,9 +66,11 @@ export default function NTNRegister() {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [showPayment, setShowPayment] = useState(false);
   const [fee, setFee] = useState(0);
-  const [cnicFile, setCnicFile] = useState<File | null>(null);
+  const [cnicFrontFile, setCnicFrontFile] = useState<File | null>(null);
+  const [cnicBackFile, setCnicBackFile] = useState<File | null>(null);
   const [addressFile, setAddressFile] = useState<File | null>(null);
-  const cnicInputRef = useRef<HTMLInputElement>(null);
+  const cnicFrontInputRef = useRef<HTMLInputElement>(null);
+  const cnicBackInputRef = useRef<HTMLInputElement>(null);
   const addressInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -118,9 +120,34 @@ export default function NTNRegister() {
     setStep((s) => s + 1);
   };
 
-  const handlePaymentSuccess = (paymentId: string) => {
+  const handlePaymentSuccess = async (paymentId: string) => {
     setShowPayment(false);
     const formValues = infoForm.getValues();
+
+    // Upload files first
+    let cnicFrontUrl: string | null = null;
+    let cnicBackUrl: string | null = null;
+    let addressUrl: string | null = null;
+    try {
+      const formData = new FormData();
+      if (cnicFrontFile) formData.append("cnicFront", cnicFrontFile);
+      if (cnicBackFile) formData.append("cnicBack", cnicBackFile);
+      if (addressFile) formData.append("addressProof", addressFile);
+      if (cnicFrontFile || cnicBackFile || addressFile) {
+        const uploadRes = await api.post("/ntn/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        const uploadData = uploadRes.data;
+        if (uploadData.success && uploadData.data) {
+          if (uploadData.data.cnicFront) cnicFrontUrl = uploadData.data.cnicFront.url;
+          if (uploadData.data.cnicBack) cnicBackUrl = uploadData.data.cnicBack.url;
+          if (uploadData.data.addressProof) addressUrl = uploadData.data.addressProof.url;
+        }
+      }
+    } catch (e) {
+      toast.error("File upload failed. Please try submitting again.");
+    }
+
     submitMutation.mutate({
       ntnType: selectedType,
       cnic: formValues.cnic,
@@ -135,8 +162,12 @@ export default function NTNRegister() {
       fee,
       documents: {
         paymentId,
-        cnicFile: cnicFile?.name ?? null,
+        cnicFrontFile: cnicFrontFile?.name ?? null,
+        cnicFrontUrl,
+        cnicBackFile: cnicBackFile?.name ?? null,
+        cnicBackUrl,
         addressFile: addressFile?.name ?? null,
+        addressUrl,
       },
     });
   };
@@ -302,35 +333,68 @@ export default function NTNRegister() {
 
           {step === 2 && (
             <div className="space-y-6">
-              {/* CNIC Upload */}
-              <div
-                onClick={() => cnicInputRef.current?.click()}
-                className={`rounded-lg border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${
-                  cnicFile
-                    ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20"
-                    : "border-border hover:border-primary/50"
-                }`}
-              >
-                {cnicFile ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <FileCheck className="h-8 w-8 text-emerald-500" />
-                    <p className="text-sm font-medium text-emerald-600">{cnicFile.name}</p>
-                    <p className="text-xs text-muted-foreground">Click to change</p>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-2">
-                    <Upload className="h-8 w-8 text-muted-foreground" />
-                    <p className="text-sm font-medium">Upload CNIC (Front + Back)</p>
-                    <p className="text-xs text-muted-foreground">Click to browse — JPG, PNG or PDF</p>
-                  </div>
-                )}
-                <input
-                  ref={cnicInputRef}
-                  type="file"
-                  accept="image/*,.pdf"
-                  className="hidden"
-                  onChange={(e) => setCnicFile(e.target.files?.[0] ?? null)}
-                />
+              <div className="grid gap-6 sm:grid-cols-2">
+                {/* CNIC Front Upload */}
+                <div
+                  onClick={() => cnicFrontInputRef.current?.click()}
+                  className={`rounded-lg border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${
+                    cnicFrontFile
+                      ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20"
+                      : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  {cnicFrontFile ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <FileCheck className="h-8 w-8 text-emerald-500" />
+                      <p className="text-sm font-medium text-emerald-600">{cnicFrontFile.name}</p>
+                      <p className="text-xs text-muted-foreground">Click to change</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2">
+                      <Upload className="h-8 w-8 text-muted-foreground" />
+                      <p className="text-sm font-medium">CNIC Front Side</p>
+                      <p className="text-xs text-muted-foreground">Click to browse — JPG, PNG or PDF</p>
+                    </div>
+                  )}
+                  <input
+                    ref={cnicFrontInputRef}
+                    type="file"
+                    accept="image/*,.pdf"
+                    className="hidden"
+                    onChange={(e) => setCnicFrontFile(e.target.files?.[0] ?? null)}
+                  />
+                </div>
+
+                {/* CNIC Back Upload */}
+                <div
+                  onClick={() => cnicBackInputRef.current?.click()}
+                  className={`rounded-lg border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${
+                    cnicBackFile
+                      ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20"
+                      : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  {cnicBackFile ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <FileCheck className="h-8 w-8 text-emerald-500" />
+                      <p className="text-sm font-medium text-emerald-600">{cnicBackFile.name}</p>
+                      <p className="text-xs text-muted-foreground">Click to change</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2">
+                      <Upload className="h-8 w-8 text-muted-foreground" />
+                      <p className="text-sm font-medium">CNIC Back Side</p>
+                      <p className="text-xs text-muted-foreground">Click to browse — JPG, PNG or PDF</p>
+                    </div>
+                  )}
+                  <input
+                    ref={cnicBackInputRef}
+                    type="file"
+                    accept="image/*,.pdf"
+                    className="hidden"
+                    onChange={(e) => setCnicBackFile(e.target.files?.[0] ?? null)}
+                  />
+                </div>
               </div>
 
               {/* Address Proof Upload */}
@@ -372,8 +436,12 @@ export default function NTNRegister() {
                 </div>
                 <Button
                   onClick={() => {
-                    if (!cnicFile) {
-                      toast.error("Please upload your CNIC");
+                    if (!cnicFrontFile) {
+                      toast.error("Please upload CNIC front side");
+                      return;
+                    }
+                    if (!cnicBackFile) {
+                      toast.error("Please upload CNIC back side");
                       return;
                     }
                     if (!addressFile) {

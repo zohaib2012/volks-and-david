@@ -19,3 +19,18 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const record = await ntnService.create(req.user!.userId, req.body);
   return success(res, record, "NTN registration submitted", 201);
 });
+
+export const uploadFiles = asyncHandler(async (req: Request, res: Response) => {
+  const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+  if (!files || Object.keys(files).length === 0) return error(res, "No files uploaded", 400);
+  const urls: Record<string, { url: string; originalName: string }> = {};
+  for (const [field, fieldFiles] of Object.entries(files)) {
+    if (fieldFiles.length > 0) {
+      urls[field] = {
+        url: `/uploads/${fieldFiles[0].filename}`,
+        originalName: fieldFiles[0].originalname,
+      };
+    }
+  }
+  return success(res, urls);
+});

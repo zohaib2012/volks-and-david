@@ -105,12 +105,10 @@ export default function AdminLayout() {
       <div className="flex items-center justify-between px-4 py-5">
         {!collapsed && (
           <NavLink to="/admin" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-emerald-500 text-white font-bold text-sm shadow-lg shadow-blue-500/25">
-              V&D
-            </div>
+            <img src="/volksanddavid-logo.svg" alt="Volks & David" className="h-8 w-8" />
             <div>
-              <span className="text-sm font-bold text-sidebar-foreground">V&D Admin</span>
-              <span className="block text-[10px] text-sidebar-foreground/50 uppercase tracking-wider">Panel</span>
+              <span className="text-sm font-bold text-sidebar-foreground">Volks &amp; David</span>
+              <span className="block text-[10px] text-sidebar-foreground/50 uppercase tracking-wider">Admin Panel</span>
             </div>
           </NavLink>
         )}

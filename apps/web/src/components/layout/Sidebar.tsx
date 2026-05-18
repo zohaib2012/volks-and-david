@@ -132,9 +132,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         <div className="flex items-center justify-between p-4 shrink-0">
           {!collapsed && (
             <Link to="/dashboard" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-primary-foreground font-bold text-sm shadow-lg">
-                V&D
-              </div>
+              <img src="/volksanddavid-logo.svg" alt="Volks & David" className="h-8 w-8" />
               <div>
                 <span className="text-sm font-bold block leading-tight">Volks &amp; David</span>
                 <span className="text-[10px] text-sidebar-foreground/60">Tax Platform</span>

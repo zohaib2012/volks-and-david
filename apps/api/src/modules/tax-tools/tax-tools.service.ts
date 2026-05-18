@@ -19,7 +19,7 @@ export const taxToolsService = {
     return {
       cnic,
       ntn: "1234567-8",
-      name: "John Doe",
+      name: "name",
       status: "ACTIVE",
       registrationDate: "2020-01-15",
       taxOffice: "RTO Lahore",
