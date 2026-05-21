@@ -39,3 +39,9 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
   await taxReturnService.remove(req.params.id, req.user!.userId);
   return success(res, null, "Tax return deleted");
 });
+
+export const uploadCnic = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.file) return error(res, "No file uploaded", 400);
+  const url = `/uploads/${req.file.filename}`;
+  return success(res, { url }, "File uploaded");
+});

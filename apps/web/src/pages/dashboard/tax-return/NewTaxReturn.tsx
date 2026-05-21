@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
-import { ArrowLeft, ArrowRight, Check, Save, LogOut } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Save, LogOut, Upload, Eye, EyeOff, ShieldCheck, FileImage } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,8 @@ const steps = [
   "Deductions",
   "Assets",
   "Liabilities",
-  "Review & Submit",
+  "Review",
+  "FBR / CNIC",
 ];
 
 const step1Schema = z.object({
@@ -109,6 +110,22 @@ export default function NewTaxReturn() {
     otherLiabilities: 0,
   });
 
+  const [fbrData, setFbrData] = useState({
+    hasNtn: true,
+    fbrPassword: "",
+    fbrPin: "",
+    showPassword: false,
+    cnicFrontFile: null as File | null,
+    cnicBackFile: null as File | null,
+    cnicFrontPreview: "",
+    cnicBackPreview: "",
+    cnicFrontUrl: "",
+    cnicBackUrl: "",
+    uploading: false,
+  });
+  const cnicFrontRef = useRef<HTMLInputElement>(null);
+  const cnicBackRef = useRef<HTMLInputElement>(null);
+
   const totalIncome =
     (incomeData.hasSalary ? incomeData.salaryAmount : 0) +
     (incomeData.hasBusiness ? incomeData.businessIncome : 0) +
@@ -156,7 +173,7 @@ export default function NewTaxReturn() {
     onError: () => toast.error("Failed to save draft"),
   });
 
-  const buildPayload = (status: string) => ({
+  const buildPayload = (status: string, overrides?: Record<string, any>) => ({
     status,
     taxYear: step1Form.getValues().taxYear,
     profileId: step1Form.getValues().profileId,
@@ -169,6 +186,11 @@ export default function NewTaxReturn() {
     totalDeductions,
     taxableIncome,
     taxPayable,
+    hasNtn: fbrData.hasNtn,
+    fbrPassword: fbrData.hasNtn ? fbrData.fbrPassword : null,
+    fbrPin: fbrData.hasNtn ? fbrData.fbrPin : null,
+    cnicFrontUrl: !fbrData.hasNtn ? (overrides?.cnicFrontUrl ?? fbrData.cnicFrontUrl) : null,
+    cnicBackUrl: !fbrData.hasNtn ? (overrides?.cnicBackUrl ?? fbrData.cnicBackUrl) : null,
   });
 
   const handleSaveDraft = () => draftMutation.mutate(buildPayload("DRAFT"));
@@ -180,7 +202,38 @@ export default function NewTaxReturn() {
   };
 
   const handleSubmit = async () => {
-    saveMutation.mutate(buildPayload("SUBMITTED"));
+    if (!fbrData.hasNtn) {
+      if (!fbrData.cnicFrontFile || !fbrData.cnicBackFile) {
+        toast.error("Please upload both CNIC front and back images");
+        return;
+      }
+      setFbrData((p) => ({ ...p, uploading: true }));
+      try {
+        const uploadFile = async (file: File) => {
+          const fd = new FormData();
+          fd.append("file", file);
+          const res = await api.post("/tax-returns/upload-cnic", fd, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          return res.data.data.url as string;
+        };
+        const [frontUrl, backUrl] = await Promise.all([
+          uploadFile(fbrData.cnicFrontFile),
+          uploadFile(fbrData.cnicBackFile),
+        ]);
+        saveMutation.mutate(buildPayload("SUBMITTED", { cnicFrontUrl: frontUrl, cnicBackUrl: backUrl }));
+      } catch {
+        toast.error("Failed to upload CNIC images. Please try again.");
+      } finally {
+        setFbrData((p) => ({ ...p, uploading: false }));
+      }
+    } else {
+      if (!fbrData.fbrPassword || !fbrData.fbrPin) {
+        toast.error("Please enter your FBR Password and PIN");
+        return;
+      }
+      saveMutation.mutate(buildPayload("SUBMITTED"));
+    }
   };
 
   const progressPercent = ((step + 1) / steps.length) * 100;
@@ -665,7 +718,7 @@ export default function NewTaxReturn() {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Tax Calculation</CardTitle>
+                <CardTitle>Tax Calculation Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between text-sm">
@@ -674,21 +727,15 @@ export default function NewTaxReturn() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Total Deductions</span>
-                  <span className="font-medium text-emerald-600">
-                    -{formatPKR(totalDeductions)}
-                  </span>
+                  <span className="font-medium text-emerald-600">-{formatPKR(totalDeductions)}</span>
                 </div>
                 <div className="border-t pt-3 flex justify-between">
                   <span className="font-semibold">Taxable Income</span>
-                  <span className="font-semibold">
-                    {formatPKR(taxableIncome)}
-                  </span>
+                  <span className="font-semibold">{formatPKR(taxableIncome)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Tax Payable</span>
-                  <span className="font-medium text-red-600">
-                    {formatPKR(taxPayable)}
-                  </span>
+                  <span className="font-medium text-red-600">{formatPKR(taxPayable)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Total Assets</span>
@@ -696,28 +743,161 @@ export default function NewTaxReturn() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Net Worth</span>
-                  <span
-                    className={
-                      netWorth >= 0 ? "text-emerald-600" : "text-red-600"
-                    }
-                  >
-                    {formatPKR(netWorth)}
-                  </span>
+                  <span className={netWorth >= 0 ? "text-emerald-600" : "text-red-600"}>{formatPKR(netWorth)}</span>
                 </div>
               </CardContent>
             </Card>
+          </div>
+        );
+
+      case 6:
+        return (
+          <div className="space-y-6">
+            <div className="rounded-lg border border-border p-5 space-y-4">
+              <p className="font-semibold text-base">Do you have an NTN (National Tax Number)?</p>
+              <div className="flex gap-4">
+                <label className={`flex-1 flex items-center gap-3 rounded-lg border-2 p-4 cursor-pointer transition-all ${fbrData.hasNtn ? "border-primary bg-primary/5" : "border-border"}`}>
+                  <input type="radio" name="hasNtn" checked={fbrData.hasNtn} onChange={() => setFbrData((p) => ({ ...p, hasNtn: true }))} className="accent-primary" />
+                  <div>
+                    <p className="font-medium">Yes, I have NTN</p>
+                    <p className="text-xs text-muted-foreground">Provide FBR credentials</p>
+                  </div>
+                </label>
+                <label className={`flex-1 flex items-center gap-3 rounded-lg border-2 p-4 cursor-pointer transition-all ${!fbrData.hasNtn ? "border-primary bg-primary/5" : "border-border"}`}>
+                  <input type="radio" name="hasNtn" checked={!fbrData.hasNtn} onChange={() => setFbrData((p) => ({ ...p, hasNtn: false }))} className="accent-primary" />
+                  <div>
+                    <p className="font-medium">No NTN yet</p>
+                    <p className="text-xs text-muted-foreground">Upload CNIC photos</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            {fbrData.hasNtn ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <ShieldCheck className="h-5 w-5 text-primary" /> FBR Credentials
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">Your FBR password and PIN are required for filing. They are stored securely and only accessible to your assigned consultant and admin.</p>
+                  <div className="space-y-2">
+                    <Label>FBR Password</Label>
+                    <div className="relative">
+                      <Input
+                        type={fbrData.showPassword ? "text" : "password"}
+                        placeholder="Enter your FBR account password"
+                        value={fbrData.fbrPassword}
+                        onChange={(e) => setFbrData((p) => ({ ...p, fbrPassword: e.target.value }))}
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        onClick={() => setFbrData((p) => ({ ...p, showPassword: !p.showPassword }))}
+                      >
+                        {fbrData.showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>FBR PIN</Label>
+                    <Input
+                      type="password"
+                      placeholder="Enter your FBR PIN"
+                      value={fbrData.fbrPin}
+                      onChange={(e) => setFbrData((p) => ({ ...p, fbrPin: e.target.value }))}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <FileImage className="h-5 w-5 text-primary" /> CNIC Photos
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-5">
+                  <p className="text-sm text-muted-foreground">Upload clear photos of your CNIC (front and back). These are required for NTN registration.</p>
+
+                  {/* CNIC Front */}
+                  <div className="space-y-2">
+                    <Label>CNIC Front Side</Label>
+                    <input ref={cnicFrontRef} type="file" accept="image/*" className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setFbrData((p) => ({
+                          ...p,
+                          cnicFrontFile: file,
+                          cnicFrontPreview: URL.createObjectURL(file),
+                        }));
+                      }}
+                    />
+                    {fbrData.cnicFrontPreview ? (
+                      <div className="relative rounded-lg overflow-hidden border border-border">
+                        <img src={fbrData.cnicFrontPreview} alt="CNIC Front" className="w-full h-40 object-cover" />
+                        <button type="button" onClick={() => cnicFrontRef.current?.click()}
+                          className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-3 py-1.5 rounded-md hover:bg-black/80 transition-colors">
+                          Change
+                        </button>
+                      </div>
+                    ) : (
+                      <button type="button" onClick={() => cnicFrontRef.current?.click()}
+                        className="w-full h-32 rounded-lg border-2 border-dashed border-border hover:border-primary/50 flex flex-col items-center justify-center gap-2 transition-colors text-muted-foreground hover:text-primary">
+                        <Upload className="h-6 w-6" />
+                        <span className="text-sm">Click to upload CNIC front</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* CNIC Back */}
+                  <div className="space-y-2">
+                    <Label>CNIC Back Side</Label>
+                    <input ref={cnicBackRef} type="file" accept="image/*" className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setFbrData((p) => ({
+                          ...p,
+                          cnicBackFile: file,
+                          cnicBackPreview: URL.createObjectURL(file),
+                        }));
+                      }}
+                    />
+                    {fbrData.cnicBackPreview ? (
+                      <div className="relative rounded-lg overflow-hidden border border-border">
+                        <img src={fbrData.cnicBackPreview} alt="CNIC Back" className="w-full h-40 object-cover" />
+                        <button type="button" onClick={() => cnicBackRef.current?.click()}
+                          className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-3 py-1.5 rounded-md hover:bg-black/80 transition-colors">
+                          Change
+                        </button>
+                      </div>
+                    ) : (
+                      <button type="button" onClick={() => cnicBackRef.current?.click()}
+                        className="w-full h-32 rounded-lg border-2 border-dashed border-border hover:border-primary/50 flex flex-col items-center justify-center gap-2 transition-colors text-muted-foreground hover:text-primary">
+                        <Upload className="h-6 w-6" />
+                        <span className="text-sm">Click to upload CNIC back</span>
+                      </button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             <div className="flex gap-3">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={handleSaveDraft}
-                disabled={draftMutation.isPending}
-              >
+              <Button variant="outline" className="flex-1" onClick={handleSaveDraft} disabled={draftMutation.isPending}>
                 <Save className="mr-2 h-4 w-4" /> {draftMutation.isPending ? "Saving..." : "Save Draft"}
               </Button>
-              <Button className="flex-1" onClick={handleSubmit} disabled={saveMutation.isPending}>
-                {saveMutation.isPending ? "Submitting..." : "Proceed to Payment"} <ArrowRight className="ml-2 h-4 w-4" />
+              <Button
+                className="flex-1"
+                onClick={handleSubmit}
+                disabled={saveMutation.isPending || fbrData.uploading}
+              >
+                {(saveMutation.isPending || fbrData.uploading) ? "Submitting..." : "Proceed to Payment"}
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -760,7 +940,7 @@ export default function NewTaxReturn() {
         <CardContent className="pt-6">
           {renderStep()}
 
-          {step < 5 && (
+          {step < 6 && (
             <div className="flex justify-between mt-8 pt-6 border-t border-border">
               <Button
                 variant="outline"

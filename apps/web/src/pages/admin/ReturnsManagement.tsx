@@ -9,6 +9,8 @@ import {
   MessageSquare,
   UserCheck,
   Loader2,
+  ShieldCheck,
+  FileImage,
 } from "lucide-react";
 import api from "@/lib/api";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -70,6 +72,11 @@ interface TaxReturn {
   assignedToUser: TaxReturnAssignedUser | null;
   createdAt: string;
   submittedAt: string | null;
+  hasNtn?: boolean | null;
+  fbrPassword?: string | null;
+  fbrPin?: string | null;
+  cnicFrontUrl?: string | null;
+  cnicBackUrl?: string | null;
 }
 
 interface PaginationInfo {
@@ -533,6 +540,68 @@ export default function ReturnsManagement() {
                   <StatusBadge status={review.item.status} />
                 </div>
               </div>
+              {review.item.hasNtn != null && (
+                <div className="rounded-lg border border-border p-4 space-y-3">
+                  <p className="flex items-center gap-2 text-sm font-semibold">
+                    {review.item.hasNtn ? (
+                      <><ShieldCheck className="h-4 w-4 text-primary" /> FBR Credentials</>
+                    ) : (
+                      <><FileImage className="h-4 w-4 text-primary" /> CNIC Photos</>
+                    )}
+                  </p>
+                  {review.item.hasNtn ? (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-xs text-muted-foreground">FBR Password</Label>
+                        <p className="font-mono text-sm mt-1 break-all">{review.item.fbrPassword || "—"}</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">FBR PIN</Label>
+                        <p className="font-mono text-sm mt-1">{review.item.fbrPin || "—"}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {review.item.cnicFrontUrl ? (
+                        <div>
+                          <Label className="text-xs text-muted-foreground block mb-1">CNIC Front</Label>
+                          <a
+                            href={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${review.item.cnicFrontUrl}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <img
+                              src={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${review.item.cnicFrontUrl}`}
+                              alt="CNIC Front"
+                              className="w-full h-28 object-cover rounded-lg border border-border hover:opacity-80 transition-opacity"
+                            />
+                          </a>
+                        </div>
+                      ) : null}
+                      {review.item.cnicBackUrl ? (
+                        <div>
+                          <Label className="text-xs text-muted-foreground block mb-1">CNIC Back</Label>
+                          <a
+                            href={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${review.item.cnicBackUrl}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <img
+                              src={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${review.item.cnicBackUrl}`}
+                              alt="CNIC Back"
+                              className="w-full h-28 object-cover rounded-lg border border-border hover:opacity-80 transition-opacity"
+                            />
+                          </a>
+                        </div>
+                      ) : null}
+                      {!review.item.cnicFrontUrl && !review.item.cnicBackUrl && (
+                        <p className="text-sm text-muted-foreground col-span-2">No CNIC photos uploaded yet.</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="space-y-1.5">
                 <Label>Review Notes</Label>
                 <Textarea

@@ -37,6 +37,7 @@ export const taxReturnService = {
       income, deductions, assets, liabilities,
       totalIncome, totalDeductions, taxableIncome, taxPayable,
       returnType, status,
+      hasNtn, fbrPassword, fbrPin, cnicFrontUrl, cnicBackUrl,
     } = data;
 
     const validProfileId =
@@ -59,6 +60,11 @@ export const taxReturnService = {
         totalDeductions: totalDeductions ? Number(totalDeductions) : 0,
         taxableIncome: taxableIncome ? Number(taxableIncome) : 0,
         taxPayable: taxPayable ? Number(taxPayable) : 0,
+        hasNtn: hasNtn ?? null,
+        fbrPassword: fbrPassword || null,
+        fbrPin: fbrPin || null,
+        cnicFrontUrl: cnicFrontUrl || null,
+        cnicBackUrl: cnicBackUrl || null,
       },
     });
   },
