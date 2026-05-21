@@ -14,12 +14,12 @@ import { Label } from "@/components/ui/label";
 import { formatPKR } from "@/lib/utils";
 
 const TAX_SLABS = [
-  { min: 0, max: 600000, rate: 0, base: 0 },
-  { min: 600000, max: 1200000, rate: 0.05, base: 0 },
-  { min: 1200000, max: 2200000, rate: 0.15, base: 30000 },
-  { min: 2200000, max: 3200000, rate: 0.25, base: 180000 },
-  { min: 3200000, max: 4100000, rate: 0.3, base: 430000 },
-  { min: 4100000, max: Infinity, rate: 0.35, base: 700000 },
+  { min: 0,       max: 600000,  rate: 0,    base: 0      },
+  { min: 600000,  max: 1200000, rate: 0.01, base: 0      },
+  { min: 1200000, max: 2200000, rate: 0.11, base: 6000   },
+  { min: 2200000, max: 3200000, rate: 0.23, base: 116000 },
+  { min: 3200000, max: 4100000, rate: 0.30, base: 346000 },
+  { min: 4100000, max: Infinity, rate: 0.35, base: 616000 },
 ];
 
 interface Deduction {

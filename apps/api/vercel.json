@@ -1,6 +1,6 @@
 {
-  "installCommand": "npm install -g pnpm@8 --silent && cd ../.. && pnpm install --no-frozen-lockfile",
-  "buildCommand": "npx prisma@5.22.0 generate",
+  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "node_modules/.bin/prisma generate",
   "routes": [
     {
       "src": "/(.*)",

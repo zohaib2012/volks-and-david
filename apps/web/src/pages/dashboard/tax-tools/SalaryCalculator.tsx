@@ -24,82 +24,24 @@ import { formatPKR } from "@/lib/utils";
 
 const TAX_YEARS = ["2023-24", "2024-25", "2025-26"];
 
+// FBR Tax Slabs 2024-25 (Filer)
 const FILER_SLABS = [
-  { min: 0, max: 600000, rate: 0, base: 0, label: "0 – 600,000" },
-  {
-    min: 600000,
-    max: 1200000,
-    rate: 0.05,
-    base: 0,
-    label: "600,001 – 1,200,000",
-  },
-  {
-    min: 1200000,
-    max: 2200000,
-    rate: 0.15,
-    base: 30000,
-    label: "1,200,001 – 2,200,000",
-  },
-  {
-    min: 2200000,
-    max: 3200000,
-    rate: 0.25,
-    base: 180000,
-    label: "2,200,001 – 3,200,000",
-  },
-  {
-    min: 3200000,
-    max: 4100000,
-    rate: 0.3,
-    base: 430000,
-    label: "3,200,001 – 4,100,000",
-  },
-  {
-    min: 4100000,
-    max: Infinity,
-    rate: 0.35,
-    base: 700000,
-    label: "4,100,001+",
-  },
+  { min: 0,       max: 600000,  rate: 0,    base: 0,      label: "0 – 600,000" },
+  { min: 600000,  max: 1200000, rate: 0.01, base: 0,      label: "600,001 – 1,200,000" },
+  { min: 1200000, max: 2200000, rate: 0.11, base: 6000,   label: "1,200,001 – 2,200,000" },
+  { min: 2200000, max: 3200000, rate: 0.23, base: 116000, label: "2,200,001 – 3,200,000" },
+  { min: 3200000, max: 4100000, rate: 0.30, base: 346000, label: "3,200,001 – 4,100,000" },
+  { min: 4100000, max: Infinity, rate: 0.35, base: 616000, label: "4,100,001+" },
 ];
 
+// FBR Tax Slabs 2024-25 (Non-Filer — approximately 2× filer marginal rates)
 const NON_FILER_SLABS = [
-  { min: 0, max: 600000, rate: 0, base: 0, label: "0 – 600,000" },
-  {
-    min: 600000,
-    max: 1200000,
-    rate: 0.1,
-    base: 0,
-    label: "600,001 – 1,200,000",
-  },
-  {
-    min: 1200000,
-    max: 2200000,
-    rate: 0.3,
-    base: 60000,
-    label: "1,200,001 – 2,200,000",
-  },
-  {
-    min: 2200000,
-    max: 3200000,
-    rate: 0.35,
-    base: 360000,
-    label: "2,200,001 – 3,200,000",
-  },
-  {
-    min: 3200000,
-    max: 4100000,
-    rate: 0.4,
-    base: 710000,
-    label: "3,200,001 – 4,100,000",
-  },
-  {
-    min: 4100000,
-    max: Infinity,
-    rate: 0.45,
-    base: 1070000,
-    label: "4,100,001+",
-  },
+  { min: 0,       max: 600000,  rate: 0,    base: 0,       label: "0 – 600,000" },
+  { min: 600000,  max: 1200000, rate: 0.02, base: 0,       label: "600,001 – 1,200,000" },
+  { min: 1200000, max: 2200000, rate: 0.22, base: 12000,   label: "1,200,001 – 2,200,000" },
+  { min: 2200000, max: 3200000, rate: 0.46, base: 232000,  label: "2,200,001 – 3,200,000" },
+  { min: 3200000, max: 4100000, rate: 0.60, base: 692000,  label: "3,200,001 – 4,100,000" },
+  { min: 4100000, max: Infinity, rate: 0.70, base: 1232000, label: "4,100,001+" },
 ];
 
 const MAX_CONVEYANCE_EXEMPT = 7500 * 12;
@@ -157,7 +99,7 @@ export default function SalaryCalculator() {
     taxableIncome > 0 ? (nonFilerTax / taxableIncome) * 100 : 0;
 
   const filerSlabInfo = findSlabInfo(taxableIncome, slabs);
-  const nonFilerSlabInfo = findSlabInfo(taxableIncome, nonSlabs);
+  void findSlabInfo(taxableIncome, nonSlabs);
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
