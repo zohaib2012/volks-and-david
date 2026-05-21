@@ -70,6 +70,7 @@ const sections: SidebarSection[] = [
       { label: "Patent", path: "/dashboard/business/patent", icon: ShieldCheck },
       { label: "My IP History", path: "/dashboard/business/ip-history", icon: ShieldCheck },
       { label: "USA Services", path: "/dashboard/usa-services", icon: Globe },
+      { label: "PSEB Registration", path: "/dashboard/pseb", icon: Building2 },
     ],
   },
   {

@@ -27,6 +27,8 @@ interface TaxReturnDetailData {
   fbrReference?: string | null;
   filedDate: string | null;
   consultantNotes?: string | null;
+  adminDocUrl?: string | null;
+  adminDocName?: string | null;
 }
 
 export default function TaxReturnDetail() {
@@ -155,6 +157,21 @@ export default function TaxReturnDetail() {
               <p className="text-sm text-muted-foreground">
                 {data.consultantNotes}
               </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {data.adminDocUrl && (
+          <Card className="md:col-span-2 border-primary/20">
+            <CardHeader>
+              <CardTitle className="text-base">Admin Document</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <a href={data.adminDocUrl} target="_blank" rel="noopener noreferrer">
+                <Button>
+                  <Download className="h-4 w-4 mr-2" /> {data.adminDocName || "Download Document"}
+                </Button>
+              </a>
             </CardContent>
           </Card>
         )}

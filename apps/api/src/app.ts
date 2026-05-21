@@ -34,6 +34,7 @@ import faqsRoutes from "./modules/faqs/faqs.routes";
 import settingsRoutes from "./modules/settings/settings.routes";
 import adminRoutes from "./modules/admin/admin.routes";
 import usaServicesRoutes from "./modules/usa-services/usa-services.routes";
+import psebRoutes from "./modules/pseb/pseb.routes";
 
 const app = express();
 
@@ -73,6 +74,7 @@ app.use("/api/faqs", faqsRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/usa-services", usaServicesRoutes);
+app.use("/api/pseb", psebRoutes);
 
 app.get("/api/health", (_, res) => {
   res.json({

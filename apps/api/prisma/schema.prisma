@@ -73,6 +73,17 @@ enum PaymentMethod {
   BANK_TRANSFER
 }
 
+enum PsebStatus {
+  DRAFT
+  SUBMITTED
+  PRIMARY_APPROVED
+  PAYMENT_PENDING
+  PAYMENT_SUBMITTED
+  APPROVED
+  REJECTED
+  REQUIRES_INFO
+}
+
 enum NotificationType {
   TAX_DEADLINE
   RETURN_STATUS
@@ -126,6 +137,8 @@ model User {
   passwordResetTokens PasswordResetToken[]
   otpCodes        OtpCode[]
   usaServices     UsaService[]
+  psebCompanyRegistrations    PsebCompanyRegistration[]
+  psebCallCenterRegistrations PsebCallCenterRegistration[]
 
   @@index([email])
   @@index([role])
@@ -226,6 +239,8 @@ model TaxReturn {
   fbrReference    String?
   consultantId    String?
   consultantNotes String?
+  adminDocUrl     String?
+  adminDocName    String?
   filedDate       DateTime?
   hasNtn          Boolean?
   fbrPassword     String?
@@ -262,6 +277,8 @@ model NtnRegistration {
   status     NtnStatus @default(PENDING)
   ntnNumber  String?
   documents  Json?
+  adminDocUrl     String?
+  adminDocName    String?
   fee        Float?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -633,4 +650,120 @@ model ActivityLog {
   @@index([userId])
   @@index([type])
   @@index([createdAt])
+}
+
+model PsebCompanyRegistration {
+  id                String     @id @default(uuid())
+  userId            String
+
+  companyName       String
+  companyType       String
+  businessNtn       String?
+  registrationDate  DateTime?
+
+  servicesOffered   Json?
+  serviceDescription String?
+
+  address           String?
+  city              String?
+  province          String?
+
+  phone             String?
+  email             String?
+  website           String?
+
+  totalEmployees    Int?
+
+  directors         Json?
+
+  ntnCertificateUrl   String?
+  cnicDirectorsUrl    Json?
+  moaUrl              String?
+  aoaUrl              String?
+  form29Url           String?
+  form2Url            String?
+  incCertificateUrl   String?
+  partnershipDeedUrl  String?
+  formCUrl            String?
+  bankStatementUrl    String?
+
+  status            PsebStatus @default(DRAFT)
+  psebRefNumber     String?
+  certificateUrl    String?
+  adminNotes        String?
+  fee               Float?
+  paymentReceiptUrl String?
+
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model PsebCallCenterRegistration {
+  id                String     @id @default(uuid())
+  userId            String
+
+  companyName       String
+  companyType       String
+  businessNtn       String?
+  registrationDate  DateTime?
+
+  seatingCapacity   Int?
+  numberOfShifts    Int?
+  dialerSystem      String?
+  pbxSystem         String?
+  internetBandwidth String?
+
+  serviceType       Json?
+  clientCountries   Json?
+  serviceDescription String?
+
+  address           String?
+  city              String?
+  province          String?
+  floorArea         String?
+
+  phone             String?
+  email             String?
+  website           String?
+
+  totalEmployees    Int?
+
+  directors         Json?
+
+  ntnCertificateUrl   String?
+  cnicDirectorsUrl    Json?
+  moaUrl              String?
+  aoaUrl              String?
+  form29Url           String?
+  incCertificateUrl   String?
+  partnershipDeedUrl  String?
+  formCUrl            String?
+  bankStatementUrl    String?
+  officePhotosUrl     Json?
+  equipmentListUrl    String?
+
+  status              PsebStatus @default(DRAFT)
+  psebRefNumber       String?
+  provisionalLetterUrl String?
+  certificateUrl      String?
+  inspectionDate      DateTime?
+  inspectionNotes     String?
+  adminNotes          String?
+  fee                 Float?
+  paymentReceiptUrl   String?
+  isBranch            Boolean   @default(false)
+  mainOfficeId        String?
+
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
 }

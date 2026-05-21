@@ -76,6 +76,13 @@ import ThemeSettings from './pages/dashboard/settings/ThemeSettings'
 import SecuritySettings from './pages/dashboard/settings/SecuritySettings'
 import NotificationSettings from './pages/dashboard/settings/NotificationSettings'
 
+import PSEBDashboard from './pages/dashboard/pseb/PSEBDashboard'
+import PSEBCompanyForm from './pages/dashboard/pseb/PSEBCompanyForm'
+import PSEBCallCenterForm from './pages/dashboard/pseb/PSEBCallCenterForm'
+import PSEBCompanyDetail from './pages/dashboard/pseb/PSEBCompanyDetail'
+import PSEBCallCenterDetail from './pages/dashboard/pseb/PSEBCallCenterDetail'
+import PSEBManagement from './pages/admin/PSEBManagement'
+
 import AdminDashboard from './pages/admin/AdminDashboard'
 import UsersManagement from './pages/admin/UsersManagement'
 import ReturnsManagement from './pages/admin/ReturnsManagement'
@@ -191,6 +198,11 @@ export default function App() {
           <Route path="/dashboard/settings/theme" element={<ErrorBoundary><ThemeSettings /></ErrorBoundary>} />
           <Route path="/dashboard/settings/security" element={<ErrorBoundary><SecuritySettings /></ErrorBoundary>} />
           <Route path="/dashboard/settings/notifications" element={<ErrorBoundary><NotificationSettings /></ErrorBoundary>} />
+          <Route path="/dashboard/pseb" element={<ErrorBoundary><PSEBDashboard /></ErrorBoundary>} />
+          <Route path="/dashboard/pseb/company/new" element={<ErrorBoundary><PSEBCompanyForm /></ErrorBoundary>} />
+          <Route path="/dashboard/pseb/company/:id" element={<ErrorBoundary><PSEBCompanyDetail /></ErrorBoundary>} />
+          <Route path="/dashboard/pseb/call-center/new" element={<ErrorBoundary><PSEBCallCenterForm /></ErrorBoundary>} />
+          <Route path="/dashboard/pseb/call-center/:id" element={<ErrorBoundary><PSEBCallCenterDetail /></ErrorBoundary>} />
         </Route>
 
         <Route element={<AdminRoute><AdminLayout /></AdminRoute>}>
@@ -218,6 +230,7 @@ export default function App() {
           <Route path="/admin/documents" element={<ErrorBoundary><DocumentsManagement /></ErrorBoundary>} />
           <Route path="/admin/expenses" element={<ErrorBoundary><ExpensesManagement /></ErrorBoundary>} />
           <Route path="/admin/settings" element={<ErrorBoundary><SiteSettings /></ErrorBoundary>} />
+          <Route path="/admin/pseb" element={<ErrorBoundary><PSEBManagement /></ErrorBoundary>} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

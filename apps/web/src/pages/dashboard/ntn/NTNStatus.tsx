@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { UserPlus, Plus, AlertCircle } from "lucide-react";
+import { UserPlus, Plus, AlertCircle, Download } from "lucide-react";
 import api from "@/lib/api";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -19,6 +19,8 @@ interface NTN {
   status: string;
   createdAt: string;
   ntnNumber?: string | null;
+  adminDocUrl?: string | null;
+  adminDocName?: string | null;
 }
 
 export default function NTNStatus() {
@@ -49,6 +51,20 @@ export default function NTNStatus() {
       key: "ntnNumber",
       header: "NTN Number",
       render: (item) => item.ntnNumber || "—",
+    },
+    {
+      key: "actions",
+      header: "Document",
+      render: (item) =>
+        item.adminDocUrl ? (
+          <a href={item.adminDocUrl} target="_blank" rel="noopener noreferrer">
+            <Button variant="ghost" size="sm">
+              <Download className="h-4 w-4 mr-1" /> {item.adminDocName || "Download"}
+            </Button>
+          </a>
+        ) : (
+          <span className="text-xs text-muted-foreground">—</span>
+        ),
     },
   ];
 

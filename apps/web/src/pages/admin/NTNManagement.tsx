@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { AlertCircle, Eye, Search, FileText } from "lucide-react";
+import { AlertCircle, Eye, Search, FileText, Upload, Download } from "lucide-react";
 import api from "@/lib/api";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -35,6 +35,8 @@ interface NtnRecord {
   status: string;
   ntnNumber: string | null;
   fee: number | null;
+  adminDocUrl?: string | null;
+  adminDocName?: string | null;
   documents: { cnicFrontFile?: string; cnicFrontUrl?: string; cnicBackFile?: string; cnicBackUrl?: string; addressFile?: string; addressUrl?: string; paymentId?: string } | null;
   createdAt: string;
 }
@@ -103,6 +105,24 @@ export default function NTNManagement() {
     },
     onError: () => toast.error("Failed to update"),
   });
+
+  const uploadDocMutation = useMutation({
+    mutationFn: async ({ id, file }: { id: string; file: File }) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await api.post(`/admin/ntn/${id}/upload-doc`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-ntn"] });
+      toast.success("Document uploaded successfully");
+    },
+    onError: () => toast.error("Failed to upload document"),
+  });
+
+  const docUploadRef = useRef<HTMLInputElement>(null);
 
   const records = data?.data ?? [];
   const pagination = data?.pagination ?? { page: 1, limit, total: 0 };
@@ -218,7 +238,7 @@ export default function NTNManagement() {
               </div>
               {detailItem.documents && (
                 <div className="space-y-3 p-4 rounded-lg bg-muted/30">
-                  <Label className="text-xs text-muted-foreground font-semibold">Uploaded Documents</Label>
+                  <Label className="text-xs text-muted-foreground font-semibold">User Uploaded Documents</Label>
                   <div className="grid grid-cols-3 gap-4">
                     <DocCard
                       label="CNIC Front"
@@ -238,6 +258,54 @@ export default function NTNManagement() {
                   </div>
                 </div>
               )}
+
+              {/* Admin Document Upload/View */}
+              <div className="rounded-lg border border-border p-4 space-y-3">
+                <h4 className="text-sm font-semibold flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" /> Admin Document
+                </h4>
+                {detailItem.adminDocUrl ? (
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-primary" />
+                      <a href={detailItem.adminDocUrl} target="_blank" rel="noopener noreferrer"
+                        className="text-sm font-medium hover:text-primary transition-colors">
+                        {detailItem.adminDocName || "Download Document"}
+                      </a>
+                    </div>
+                    <a href={detailItem.adminDocUrl} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" size="sm">
+                        <Download className="h-4 w-4 mr-1" /> View
+                      </Button>
+                    </a>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No document uploaded yet</p>
+                )}
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    ref={docUploadRef}
+                    type="file"
+                    accept="image/*,.pdf"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file && detailItem) {
+                        uploadDocMutation.mutate({ id: detailItem.id, file });
+                      }
+                    }}
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => docUploadRef.current?.click()}
+                    disabled={uploadDocMutation.isPending}
+                  >
+                    <Upload className="h-4 w-4 mr-1" /> Upload Document
+                  </Button>
+                </div>
+              </div>
+
               <div className="border-t pt-4">
                 <h4 className="text-sm font-semibold mb-3">Update Registration</h4>
                 <div className="space-y-4">

@@ -40,6 +40,7 @@ router.get("/tax-returns", controller.listTaxReturns);
 router.put("/tax-returns/bulk-assign", controller.bulkAssignReturns);
 router.put("/tax-returns/:id/review", controller.reviewReturn);
 router.put("/tax-returns/:id", controller.updateTaxReturn);
+router.post("/tax-returns/:id/upload-doc", upload.single("file"), controller.uploadReturnDoc);
 
 // Consultants
 router.get("/consultants", controller.listConsultants);
@@ -78,6 +79,7 @@ router.put("/notices/:id/assign", controller.assignNotice);
 // NTN Registrations
 router.get("/ntn", controller.listNtn);
 router.put("/ntn/:id", controller.updateNtn);
+router.post("/ntn/:id/upload-doc", upload.single("file"), controller.uploadNtnDoc);
 
 // GST Registrations
 router.get("/gst", controller.listGst);

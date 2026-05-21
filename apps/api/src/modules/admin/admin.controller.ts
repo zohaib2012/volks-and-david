@@ -254,6 +254,28 @@ export const updateNtn = asyncHandler(async (req: Request, res: Response) => {
   return success(res, ntn, "NTN registration updated");
 });
 
+export const uploadNtnDoc = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.file) return res.status(400).json({ success: false, message: "No file uploaded" });
+  const filename = req.file.filename;
+  const url = `/uploads/${filename}`;
+  const ntn = await adminService.updateNtn(req.params.id, {
+    adminDocUrl: url,
+    adminDocName: req.file.originalname,
+  });
+  return success(res, { url, name: req.file.originalname }, "Document uploaded");
+});
+
+export const uploadReturnDoc = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.file) return res.status(400).json({ success: false, message: "No file uploaded" });
+  const filename = req.file.filename;
+  const url = `/uploads/${filename}`;
+  const tr = await adminService.updateTaxReturn(req.params.id, {
+    adminDocUrl: url,
+    adminDocName: req.file.originalname,
+  });
+  return success(res, { url, name: req.file.originalname }, "Document uploaded");
+});
+
 // ==================== GST ====================
 export const listGst = asyncHandler(async (req: Request, res: Response) => {
   const { page = "1", limit = "10", ...filters } = req.query;

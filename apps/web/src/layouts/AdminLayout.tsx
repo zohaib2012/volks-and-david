@@ -42,6 +42,7 @@ const adminNavItems = [
   { label: "Send Notification", path: "/admin/send-notification", icon: Bell },
   { label: "Documents", path: "/admin/documents", icon: FolderOpen },
   { label: "Expenses", path: "/admin/expenses", icon: Wallet },
+  { label: "PSEB Registrations", path: "/admin/pseb", icon: Building2 },
   { label: "Site Settings", path: "/admin/settings", icon: SettingsIcon },
 ]
 
@@ -70,6 +71,7 @@ const breadcrumbMap: Record<string, string> = {
   "/admin/send-notification": "Send Notification",
   "/admin/documents": "Documents",
   "/admin/expenses": "Expenses",
+  "/admin/pseb": "PSEB Registrations",
 }
 
 export default function AdminLayout() {

@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import { useState, useRef } from "react";
 import {
   Search,
   AlertCircle,
@@ -11,6 +9,9 @@ import {
   Loader2,
   ShieldCheck,
   FileImage,
+  FileText,
+  Upload,
+  Download,
 } from "lucide-react";
 import api from "@/lib/api";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -123,6 +124,24 @@ export default function ReturnsManagement() {
     open: boolean;
     consultantId: string;
   }>({ open: false, consultantId: "" });
+
+  const docUploadRef = useRef<HTMLInputElement>(null);
+
+  const uploadDocMutation = useMutation({
+    mutationFn: async ({ id, file }: { id: string; file: File }) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await api.post(`/admin/tax-returns/${id}/upload-doc`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-tax-returns"] });
+      toast.success("Document uploaded successfully");
+    },
+    onError: () => toast.error("Failed to upload document"),
+  });
 
   const {
     data: returnsData,
@@ -601,6 +620,53 @@ export default function ReturnsManagement() {
                   )}
                 </div>
               )}
+
+              {/* Admin Document Upload/View */}
+              <div className="rounded-lg border border-border p-4 space-y-3">
+                <h4 className="text-sm font-semibold flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" /> Admin Document
+                </h4>
+                {review.item && (review.item as any).adminDocUrl ? (
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-primary" />
+                      <a href={(review.item as any).adminDocUrl} target="_blank" rel="noopener noreferrer"
+                        className="text-sm font-medium hover:text-primary transition-colors">
+                        {(review.item as any).adminDocName || "Download Document"}
+                      </a>
+                    </div>
+                    <a href={(review.item as any).adminDocUrl} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" size="sm">
+                        <Download className="h-4 w-4 mr-1" /> View
+                      </Button>
+                    </a>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No document uploaded yet</p>
+                )}
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    ref={docUploadRef}
+                    type="file"
+                    accept="image/*,.pdf"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file && review.item) {
+                        uploadDocMutation.mutate({ id: review.item.id, file });
+                      }
+                    }}
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => docUploadRef.current?.click()}
+                    disabled={uploadDocMutation.isPending}
+                  >
+                    <Upload className="h-4 w-4 mr-1" /> Upload Document
+                  </Button>
+                </div>
+              </div>
 
               <div className="space-y-1.5">
                 <Label>Review Notes</Label>
