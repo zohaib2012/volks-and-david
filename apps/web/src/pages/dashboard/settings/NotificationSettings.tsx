@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import {
@@ -133,13 +133,35 @@ export default function NotificationSettingsPage() {
     );
   };
 
+  const { data: savedPrefs } = useQuery({
+    queryKey: ["notification-preferences"],
+    queryFn: async () => {
+      const res = await api.get("/notifications/preferences");
+      return res.data?.data as Record<string, any> | null;
+    },
+  });
+
+  useEffect(() => {
+    if (!savedPrefs) return;
+    if (savedPrefs.global) setGlobalPrefs(savedPrefs.global);
+    if (savedPrefs.groups) {
+      setGroups((prev) =>
+        prev.map((g) =>
+          savedPrefs.groups[g.id] ? { ...g, prefs: savedPrefs.groups[g.id] } : g,
+        ),
+      );
+    }
+  }, [savedPrefs]);
+
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const prefs = groups.reduce((acc, g) => {
+      const groupPrefs = groups.reduce((acc, g) => {
         acc[g.id] = g.prefs;
         return acc;
       }, {} as Record<string, any>);
-      const res = await api.put("/notifications/preferences", { preferences: prefs });
+      const res = await api.put("/notifications/preferences", {
+        preferences: { global: globalPrefs, groups: groupPrefs },
+      });
       return res.data;
     },
     onSuccess: () => toast.success("Notification preferences saved!"),

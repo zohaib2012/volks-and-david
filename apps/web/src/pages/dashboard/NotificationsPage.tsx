@@ -26,7 +26,7 @@ interface Notification {
   id: string;
   title: string;
   message: string;
-  type: "tax_deadline" | "payment" | "consultation" | "system" | "fbr_notice";
+  type: string;
   isRead: boolean;
   createdAt: string;
   actionUrl?: string;
@@ -35,28 +35,31 @@ interface Notification {
 const tabOptions = [
   { id: "all", label: "All" },
   { id: "unread", label: "Unread" },
-  { id: "tax_deadline", label: "Tax Deadlines" },
-  { id: "payment", label: "Payments" },
-  { id: "consultation", label: "Consultations" },
+  { id: "RETURN_STATUS", label: "Tax Returns" },
+  { id: "TAX_DEADLINE", label: "Tax Deadlines" },
+  { id: "PAYMENT", label: "Payments" },
+  { id: "CONSULTATION", label: "Consultations" },
+  { id: "FBR_NOTICE", label: "FBR Notices" },
 ];
 
 const typeIcons: Record<string, React.ReactNode> = {
-  tax_deadline: <Clock className="h-5 w-5" />,
-  payment: <CreditCard className="h-5 w-5" />,
-  consultation: <Calendar className="h-5 w-5" />,
-  system: <Bell className="h-5 w-5" />,
-  fbr_notice: <AlertCircle className="h-5 w-5" />,
+  TAX_DEADLINE: <Clock className="h-5 w-5" />,
+  RETURN_STATUS: <FileText className="h-5 w-5" />,
+  PAYMENT: <CreditCard className="h-5 w-5" />,
+  CONSULTATION: <Calendar className="h-5 w-5" />,
+  SYSTEM: <Bell className="h-5 w-5" />,
+  REFERRAL: <Mail className="h-5 w-5" />,
+  FBR_NOTICE: <AlertCircle className="h-5 w-5" />,
 };
 
 const typeIconBg: Record<string, string> = {
-  tax_deadline:
-    "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
-  payment:
-    "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
-  consultation:
-    "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
-  system: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400",
-  fbr_notice: "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400",
+  TAX_DEADLINE: "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
+  RETURN_STATUS: "bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400",
+  PAYMENT: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
+  CONSULTATION: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+  SYSTEM: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400",
+  REFERRAL: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400",
+  FBR_NOTICE: "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400",
 };
 
 function getTimeAgo(dateString: string): string {
@@ -105,11 +108,10 @@ export default function NotificationsPage() {
     queryKey: ["notifications", activeTab],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (activeTab !== "all" && activeTab !== "unread") {
-        params.set("type", activeTab);
-      }
       if (activeTab === "unread") {
         params.set("unread", "true");
+      } else if (activeTab !== "all") {
+        params.set("type", activeTab);
       }
       const res = await api.get(`/notifications?${params}`);
       return res.data;

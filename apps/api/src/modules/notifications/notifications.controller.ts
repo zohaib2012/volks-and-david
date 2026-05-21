@@ -4,8 +4,14 @@ import { success } from "../../utils/response";
 import { notificationService } from "./notifications.service";
 
 export const list = asyncHandler(async (req: Request, res: Response) => {
-  const records = await notificationService.list(req.user!.userId);
+  const { type, unread } = req.query as { type?: string; unread?: string };
+  const records = await notificationService.list(req.user!.userId, { type, unread });
   return success(res, records);
+});
+
+export const getUnreadCount = asyncHandler(async (req: Request, res: Response) => {
+  const count = await notificationService.getUnreadCount(req.user!.userId);
+  return success(res, { count });
 });
 
 export const markRead = asyncHandler(async (req: Request, res: Response) => {
@@ -23,7 +29,13 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
   return success(res, null, "Notification deleted");
 });
 
+export const getPreferences = asyncHandler(async (req: Request, res: Response) => {
+  const prefs = await notificationService.getPreferences(req.user!.userId);
+  return success(res, prefs);
+});
+
 export const updatePreferences = asyncHandler(async (req: Request, res: Response) => {
   const { preferences } = req.body;
-  return success(res, { preferences }, "Preferences saved");
+  const saved = await notificationService.savePreferences(req.user!.userId, preferences);
+  return success(res, saved, "Preferences saved");
 });

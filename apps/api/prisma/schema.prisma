@@ -95,9 +95,10 @@ model User {
   isActive        Boolean   @default(true)
   referralCode    String    @unique
   referredBy      String?
-  language        String    @default("en")
-  themeSettings   Json?
-  lastLoginAt     DateTime?
+  language                String    @default("en")
+  themeSettings           Json?
+  notificationPreferences Json?
+  lastLoginAt             DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 

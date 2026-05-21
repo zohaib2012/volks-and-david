@@ -5,6 +5,8 @@ import * as controller from "./notifications.controller";
 const router = Router();
 router.use(authenticate);
 
+router.get("/unread-count", controller.getUnreadCount);
+router.get("/preferences", controller.getPreferences);
 router.get("/", controller.list);
 router.put("/preferences", controller.updatePreferences);
 router.put("/read-all", controller.markAllRead);

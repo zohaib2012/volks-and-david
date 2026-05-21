@@ -459,7 +459,34 @@ export const adminService = {
     const updateData: any = { status };
     if (data.notes) updateData.consultantNotes = data.notes;
 
-    return prisma.taxReturn.update({ where: { id }, data: updateData });
+    const updated = await prisma.taxReturn.update({ where: { id }, data: updateData });
+
+    const notifMap: Record<string, { title: string; message: string }> = {
+      approve: {
+        title: "Tax Return Approved",
+        message: "Your tax return has been reviewed and approved. You will be contacted shortly.",
+      },
+      reject: {
+        title: "Tax Return Rejected",
+        message: `Your tax return has been rejected.${data.notes ? ` Reason: ${data.notes}` : " Please contact support."}`,
+      },
+      request_info: {
+        title: "More Information Required",
+        message: `Additional information is needed for your tax return.${data.notes ? ` Details: ${data.notes}` : ""}`,
+      },
+      submit: {
+        title: "Tax Return Submitted",
+        message: "Your tax return has been submitted to FBR.",
+      },
+    };
+    const notif = notifMap[data.action];
+    if (notif) {
+      await prisma.notification.create({
+        data: { userId: updated.userId, type: NotificationType.RETURN_STATUS, title: notif.title, message: notif.message },
+      });
+    }
+
+    return updated;
   },
 
   async assignNotice(noticeId: string, consultantId: string) {
