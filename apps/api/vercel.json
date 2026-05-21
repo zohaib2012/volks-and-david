@@ -1,6 +1,6 @@
 {
   "installCommand": "npm install -g pnpm@8 --silent && cd ../.. && pnpm install --no-frozen-lockfile",
-  "buildCommand": "npx prisma generate",
+  "buildCommand": "npx prisma@5.22.0 generate",
   "routes": [
     {
       "src": "/(.*)",
