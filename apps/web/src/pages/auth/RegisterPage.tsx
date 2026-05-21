@@ -60,8 +60,8 @@ export default function RegisterPage() {
         referralCode: data.referralCode || undefined,
       });
       if (res.success) {
-        toast.success("Account created successfully!");
-        navigate("/dashboard");
+        toast.success("Account created! Please verify your email.");
+        navigate(`/verify-otp?type=email_verify&email=${encodeURIComponent(data.email)}`);
       } else {
         toast.error(res.message || "Registration failed");
       }

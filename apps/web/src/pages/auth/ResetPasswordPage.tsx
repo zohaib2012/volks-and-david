@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import api from "@/lib/api";
 import { useForm } from "react-hook-form";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
@@ -22,6 +23,8 @@ interface ResetPasswordForm {
 }
 
 export default function ResetPasswordPage() {
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token") || "";
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,13 +40,17 @@ export default function ResetPasswordPage() {
   const newPassword = watch("newPassword");
 
   const onSubmit = async (data: ResetPasswordForm) => {
+    if (!token) {
+      toast.error("Invalid reset link. Please request a new one.");
+      return;
+    }
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await api.post("/auth/reset-password", { token, password: data.newPassword });
       setIsSuccess(true);
       toast.success("Password reset successfully!");
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      toast.error("Link expired or invalid. Please request a new OTP.");
     } finally {
       setIsLoading(false);
     }

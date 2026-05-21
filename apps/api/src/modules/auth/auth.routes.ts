@@ -9,6 +9,7 @@ router.post("/register", authLimiter, authController.register);
 router.post("/login", authLimiter, authController.login);
 router.post("/send-otp", authLimiter, authController.sendOtp);
 router.post("/verify-otp", authLimiter, authController.verifyOtp);
+router.post("/verify-login-otp", authLimiter, authController.verifyLoginOtp);
 router.post("/refresh-token", authController.refreshToken);
 router.post("/logout", authenticate, authController.logout);
 router.post("/forgot-password", authLimiter, authController.forgotPassword);

@@ -37,6 +37,11 @@ export default function LoginPage() {
     try {
       const res = await login(data.email, data.password);
       if (res.success) {
+        if (res.data.requiresOtp) {
+          toast.success("OTP sent to your email");
+          navigate(`/verify-otp?type=admin_2fa&email=${encodeURIComponent(res.data.email)}`);
+          return;
+        }
         toast.success("Welcome back!");
         const role = res.data.user?.role;
         if (role === "ADMIN" || role === "SUPER_ADMIN") {

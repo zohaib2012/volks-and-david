@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 const navLinks = [
   { label: "Home", path: "/" },
   { label: "Services", path: "/services" },
+  { label: "Tax Tools", path: "/tax-tools/salary-calculator" },
   { label: "Pricing", path: "/pricing" },
   { label: "USA Services", path: "/usa-services" },
   { label: "Blog", path: "/blog" },

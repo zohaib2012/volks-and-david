@@ -59,6 +59,11 @@ export const me = asyncHandler(async (req: Request, res: Response) => {
   return success(res, user);
 });
 
+export const verifyLoginOtp = asyncHandler(async (req: Request, res: Response) => {
+  const result = await authService.verifyLoginOtp(req.body.email, req.body.code);
+  return success(res, result, "Login verified");
+});
+
 export const changePassword = asyncHandler(async (req: Request, res: Response) => {
   const { currentPassword, newPassword } = req.body;
   if (!currentPassword || !newPassword)

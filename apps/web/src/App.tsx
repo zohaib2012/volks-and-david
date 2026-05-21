@@ -16,6 +16,7 @@ import ContactPage from './pages/public/ContactPage'
 import USAServicesPage from './pages/public/USAServicesPage'
 import BusinessServicesPage from './pages/public/BusinessServicesPage'
 import SalesTaxPage from './pages/public/SalesTaxPage'
+import SalaryCalculatorPage from './pages/public/SalaryCalculatorPage'
 import IntellectualPropertyPage from './pages/public/IntellectualPropertyPage'
 import PrivacyPolicyPage from './pages/public/PrivacyPolicyPage'
 import TermsPage from './pages/public/TermsPage'
@@ -129,6 +130,7 @@ export default function App() {
           <Route path="/usa-services" element={<ErrorBoundary><USAServicesPage /></ErrorBoundary>} />
           <Route path="/business-services" element={<ErrorBoundary><BusinessServicesPage /></ErrorBoundary>} />
           <Route path="/sales-tax" element={<ErrorBoundary><SalesTaxPage /></ErrorBoundary>} />
+          <Route path="/tax-tools/salary-calculator" element={<ErrorBoundary><SalaryCalculatorPage /></ErrorBoundary>} />
           <Route path="/intellectual-property" element={<ErrorBoundary><IntellectualPropertyPage /></ErrorBoundary>} />
           <Route path="/privacy" element={<ErrorBoundary><PrivacyPolicyPage /></ErrorBoundary>} />
           <Route path="/terms" element={<ErrorBoundary><TermsPage /></ErrorBoundary>} />
