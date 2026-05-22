@@ -1,6 +1,6 @@
 {
   "installCommand": "npm install --legacy-peer-deps",
-  "buildCommand": "npx prisma generate --schema=prisma/schema.prisma",
+  "buildCommand": "node_modules/.bin/prisma generate --schema=prisma/schema.prisma",
   "routes": [
     {
       "src": "/(.*)",
