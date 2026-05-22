@@ -256,11 +256,11 @@ export const updateNtn = asyncHandler(async (req: Request, res: Response) => {
 
 export const uploadNtnDoc = asyncHandler(async (req: Request, res: Response) => {
   if (!req.file) return res.status(400).json({ success: false, message: "No file uploaded" });
-  const filename = req.file.filename;
-  const url = `/uploads/${filename}`;
-  const ntn = await adminService.updateNtn(req.params.id, {
-    adminDocUrl: url,
-    adminDocName: req.file.originalname,
+  const url = `/uploads/${req.file.filename}`;
+  const current = await adminService.getNtnById(req.params.id);
+  const currentDocs = (current?.documents as any) || {};
+  await adminService.updateNtn(req.params.id, {
+    documents: { ...currentDocs, adminDocUrl: url, adminDocName: req.file.originalname },
   });
   return success(res, { url, name: req.file.originalname }, "Document uploaded");
 });

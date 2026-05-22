@@ -528,12 +528,17 @@ export const adminService = {
     return { data, pagination: { page, limit, total } };
   },
 
+  async getNtnById(id: string) {
+    return prisma.ntnRegistration.findUnique({ where: { id } });
+  },
+
   async updateNtn(id: string, data: any) {
     const allowed = ["status", "ntnNumber", "fee", "documents"];
     const updateData: any = {};
     for (const key of allowed) {
       if (data[key] !== undefined) updateData[key] = data[key];
     }
+    if (Object.keys(updateData).length === 0) return prisma.ntnRegistration.findUnique({ where: { id } });
     return prisma.ntnRegistration.update({ where: { id }, data: updateData });
   },
 

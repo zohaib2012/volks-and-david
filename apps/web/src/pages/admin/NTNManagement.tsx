@@ -35,9 +35,7 @@ interface NtnRecord {
   status: string;
   ntnNumber: string | null;
   fee: number | null;
-  adminDocUrl?: string | null;
-  adminDocName?: string | null;
-  documents: { cnicFrontFile?: string; cnicFrontUrl?: string; cnicBackFile?: string; cnicBackUrl?: string; addressFile?: string; addressUrl?: string; paymentId?: string } | null;
+  documents: { cnicFrontFile?: string; cnicFrontUrl?: string; cnicBackFile?: string; cnicBackUrl?: string; addressFile?: string; addressUrl?: string; paymentId?: string; adminDocUrl?: string; adminDocName?: string } | null;
   createdAt: string;
 }
 
@@ -264,16 +262,16 @@ export default function NTNManagement() {
                 <h4 className="text-sm font-semibold flex items-center gap-2">
                   <FileText className="h-4 w-4 text-primary" /> Admin Document
                 </h4>
-                {detailItem.adminDocUrl ? (
+                {detailItem.documents?.adminDocUrl ? (
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                     <div className="flex items-center gap-2">
                       <FileText className="h-5 w-5 text-primary" />
-                      <a href={detailItem.adminDocUrl} target="_blank" rel="noopener noreferrer"
+                      <a href={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || 'http://localhost:5001'}${detailItem.documents.adminDocUrl}`} target="_blank" rel="noopener noreferrer"
                         className="text-sm font-medium hover:text-primary transition-colors">
-                        {detailItem.adminDocName || "Download Document"}
+                        {detailItem.documents.adminDocName || "Download Document"}
                       </a>
                     </div>
-                    <a href={detailItem.adminDocUrl} target="_blank" rel="noopener noreferrer">
+                    <a href={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || 'http://localhost:5001'}${detailItem.documents.adminDocUrl}`} target="_blank" rel="noopener noreferrer">
                       <Button variant="outline" size="sm">
                         <Download className="h-4 w-4 mr-1" /> View
                       </Button>
