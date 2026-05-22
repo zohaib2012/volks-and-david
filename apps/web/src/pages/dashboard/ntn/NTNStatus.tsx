@@ -19,8 +19,7 @@ interface NTN {
   status: string;
   createdAt: string;
   ntnNumber?: string | null;
-  adminDocUrl?: string | null;
-  adminDocName?: string | null;
+  documents?: { adminDocUrl?: string; adminDocName?: string; [key: string]: any } | null;
 }
 
 export default function NTNStatus() {
@@ -55,16 +54,20 @@ export default function NTNStatus() {
     {
       key: "actions",
       header: "Document",
-      render: (item) =>
-        item.adminDocUrl ? (
-          <a href={item.adminDocUrl} target="_blank" rel="noopener noreferrer">
+      render: (item) => {
+        const docUrl = item.documents?.adminDocUrl;
+        const docName = item.documents?.adminDocName;
+        const baseUrl = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "");
+        return docUrl ? (
+          <a href={`${baseUrl}${docUrl}`} target="_blank" rel="noopener noreferrer">
             <Button variant="ghost" size="sm">
-              <Download className="h-4 w-4 mr-1" /> {item.adminDocName || "Download"}
+              <Download className="h-4 w-4 mr-1" /> {docName || "Download"}
             </Button>
           </a>
         ) : (
           <span className="text-xs text-muted-foreground">—</span>
-        ),
+        );
+      },
     },
   ];
 
