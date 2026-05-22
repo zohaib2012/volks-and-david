@@ -22,5 +22,7 @@ router.get("/admin/company", requireRole("ADMIN", "SUPER_ADMIN"), controller.adm
 router.get("/admin/call-center", requireRole("ADMIN", "SUPER_ADMIN"), controller.adminListCallCenter);
 router.put("/admin/company/:id/review", requireRole("ADMIN", "SUPER_ADMIN"), controller.adminReviewCompany);
 router.put("/admin/call-center/:id/review", requireRole("ADMIN", "SUPER_ADMIN"), controller.adminReviewCallCenter);
+router.post("/admin/company/:id/upload-doc", requireRole("ADMIN", "SUPER_ADMIN"), controller.uploadMiddleware, controller.adminUploadCompanyDoc);
+router.post("/admin/call-center/:id/upload-doc", requireRole("ADMIN", "SUPER_ADMIN"), controller.uploadMiddleware, controller.adminUploadCallCenterDoc);
 
 export default router;

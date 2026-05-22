@@ -267,9 +267,18 @@ export const uploadNtnDoc = asyncHandler(async (req: Request, res: Response) => 
 
 export const uploadReturnDoc = asyncHandler(async (req: Request, res: Response) => {
   if (!req.file) return res.status(400).json({ success: false, message: "No file uploaded" });
-  const filename = req.file.filename;
-  const url = `/uploads/${filename}`;
-  const tr = await adminService.updateTaxReturn(req.params.id, {
+  const url = `/uploads/${req.file.filename}`;
+  await adminService.updateTaxReturn(req.params.id, {
+    adminDocUrl: url,
+    adminDocName: req.file.originalname,
+  });
+  return success(res, { url, name: req.file.originalname }, "Document uploaded");
+});
+
+export const uploadSecpDoc = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.file) return res.status(400).json({ success: false, message: "No file uploaded" });
+  const url = `/uploads/${req.file.filename}`;
+  await adminService.updateSecp(req.params.id, {
     adminDocUrl: url,
     adminDocName: req.file.originalname,
   });

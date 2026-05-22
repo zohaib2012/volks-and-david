@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Building2, AlertCircle, Eye } from "lucide-react";
+import { Building2, AlertCircle, Eye, Download, FileText } from "lucide-react";
 import api from "@/lib/api";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StatusBadge } from "@/components/shared/StatusBadge";
@@ -18,6 +18,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
+const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "");
+
 interface SecpRecord {
   id: string;
   companyType: string | null;
@@ -30,6 +32,8 @@ interface SecpRecord {
   status: string;
   secpRefNumber: string | null;
   fee: number | null;
+  adminDocUrl: string | null;
+  adminDocName: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -146,6 +150,18 @@ export default function SECPRegistrationHistory() {
                   <pre className="text-xs bg-muted/30 p-3 rounded-lg overflow-x-auto whitespace-pre-wrap">
                     {JSON.stringify(selected.directors, null, 2)}
                   </pre>
+                </div>
+              )}
+              {selected.adminDocUrl && (
+                <div className="border-t border-border pt-3">
+                  <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-primary" /> Document from Admin
+                  </h4>
+                  <a href={`${BASE_URL}${selected.adminDocUrl}`} target="_blank" rel="noopener noreferrer">
+                    <Button size="sm">
+                      <Download className="h-4 w-4 mr-2" /> {selected.adminDocName || "Download Document"}
+                    </Button>
+                  </a>
                 </div>
               )}
             </div>

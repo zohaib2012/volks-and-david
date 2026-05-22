@@ -216,13 +216,18 @@ export const adminService = {
     return { data, pagination: { page, limit, total } };
   },
 
+  async getTaxReturnById(id: string) {
+    return prisma.taxReturn.findUnique({ where: { id } });
+  },
+
   async updateTaxReturn(id: string, data: any) {
-    const allowed = ["status", "consultantNotes", "consultantId", "fbrReference", "income", "totalIncome", "taxableIncome", "taxPayable"];
+    const allowed = ["status", "consultantNotes", "consultantId", "fbrReference", "income", "totalIncome", "taxableIncome", "taxPayable", "adminDocUrl", "adminDocName"];
     const updateData: any = {};
     for (const key of allowed) {
       if (data[key] !== undefined) updateData[key] = data[key];
     }
     if (data.assignedTo !== undefined) updateData.consultantId = data.assignedTo;
+    if (Object.keys(updateData).length === 0) return prisma.taxReturn.findUnique({ where: { id } });
     return prisma.taxReturn.update({ where: { id }, data: updateData });
   },
 
@@ -532,6 +537,10 @@ export const adminService = {
     return prisma.ntnRegistration.findUnique({ where: { id } });
   },
 
+  async getSecpById(id: string) {
+    return prisma.secpRegistration.findUnique({ where: { id } });
+  },
+
   async updateNtn(id: string, data: any) {
     const allowed = ["status", "ntnNumber", "fee", "documents"];
     const updateData: any = {};
@@ -596,11 +605,12 @@ export const adminService = {
   },
 
   async updateSecp(id: string, data: any) {
-    const allowed = ["status", "secpRefNumber", "fee"];
+    const allowed = ["status", "secpRefNumber", "fee", "adminDocUrl", "adminDocName"];
     const updateData: any = {};
     for (const key of allowed) {
       if (data[key] !== undefined) updateData[key] = data[key];
     }
+    if (Object.keys(updateData).length === 0) return prisma.secpRegistration.findUnique({ where: { id } });
     return prisma.secpRegistration.update({ where: { id }, data: updateData });
   },
 

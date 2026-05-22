@@ -100,3 +100,27 @@ export const adminReviewCallCenter = asyncHandler(async (req: Request, res: Resp
   const updated = await psebService.adminReviewCallCenter(req.params.id, req.body);
   return success(res, updated, "Call Center registration updated");
 });
+
+export const adminUploadCompanyDoc = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.file) return error(res, "No file uploaded", 400);
+  if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
+  const ext = path.extname(req.file.originalname) || ".pdf";
+  const filename = `pseb-${unique}${ext}`;
+  fs.writeFileSync(path.join(UPLOADS_DIR, filename), req.file.buffer);
+  const url = `/uploads/${filename}`;
+  await psebService.updateCompany(req.params.id, { adminDocUrl: url, adminDocName: req.file.originalname });
+  return success(res, { url, name: req.file.originalname }, "Document uploaded");
+});
+
+export const adminUploadCallCenterDoc = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.file) return error(res, "No file uploaded", 400);
+  if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
+  const ext = path.extname(req.file.originalname) || ".pdf";
+  const filename = `pseb-${unique}${ext}`;
+  fs.writeFileSync(path.join(UPLOADS_DIR, filename), req.file.buffer);
+  const url = `/uploads/${filename}`;
+  await psebService.updateCallCenter(req.params.id, { adminDocUrl: url, adminDocName: req.file.originalname });
+  return success(res, { url, name: req.file.originalname }, "Document uploaded");
+});

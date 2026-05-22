@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { AlertCircle, Eye } from "lucide-react";
+import { AlertCircle, Eye, Upload, Download, FileText } from "lucide-react";
 import api from "@/lib/api";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -18,6 +18,8 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { formatPKR, formatDate } from "@/lib/utils";
 
+const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "");
+
 interface SecpRecord {
   id: string;
   user: { id: string; name: string; email: string };
@@ -28,6 +30,8 @@ interface SecpRecord {
   status: string;
   secpRefNumber: string | null;
   fee: number | null;
+  adminDocUrl: string | null;
+  adminDocName: string | null;
   createdAt: string;
 }
 
@@ -48,6 +52,7 @@ export default function SECPManagement() {
   const [editOpen, setEditOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const [editForm, setEditForm] = useState<EditForm>({ status: "", secpRefNumber: "", fee: 0 });
+  const docUploadRef = useRef<HTMLInputElement>(null);
 
   const queryParams = new URLSearchParams({ page: String(page), limit: String(limit) });
   if (statusFilter) queryParams.set("status", statusFilter);
@@ -63,14 +68,27 @@ export default function SECPManagement() {
     onError: () => toast.error("Failed to update"),
   });
 
+  const uploadDocMutation = useMutation({
+    mutationFn: async ({ id, file }: { id: string; file: File }) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await api.post(`/admin/secp/${id}/upload-doc`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return res.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-secp"] });
+      if (detailItem) setDetailItem({ ...detailItem, adminDocUrl: data.data?.url, adminDocName: data.data?.name });
+      toast.success("Document uploaded successfully");
+    },
+    onError: () => toast.error("Failed to upload document"),
+  });
+
   const records = data?.data ?? [];
   const pagination = data?.pagination ?? { page: 1, limit, total: 0 };
 
-  const openView = (item: SecpRecord) => {
-    setDetailItem(item);
-    setViewOpen(true);
-  };
-
+  const openView = (item: SecpRecord) => { setDetailItem(item); setViewOpen(true); };
   const openEdit = (item: SecpRecord) => {
     setEditForm({ status: item.status, secpRefNumber: item.secpRefNumber || "", fee: item.fee || 0 });
     setDetailItem(item);
@@ -117,19 +135,63 @@ export default function SECPManagement() {
         <DataTable columns={columns} data={records} keyExtractor={(item) => item.id}
           pagination={pagination} onPageChange={setPage} emptyTitle="No SECP registrations" />
       </div>
+
+      {/* View Dialog */}
       <Dialog open={viewOpen} onOpenChange={setViewOpen}>
         <DialogContent className="sm:max-w-lg rounded-xl">
           <DialogHeader><DialogTitle>SECP Registration Details</DialogTitle></DialogHeader>
           {detailItem && (
-            <div className="space-y-3">
+            <div className="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div><span className="text-muted-foreground">Type:</span> {companyTypeLabels[detailItem.companyType] || detailItem.companyType}</div>
                 <div><span className="text-muted-foreground">Status:</span> <StatusBadge status={detailItem.status} /></div>
                 <div><span className="text-muted-foreground">City:</span> {detailItem.city || "-"}</div>
                 <div><span className="text-muted-foreground">Capital:</span> {detailItem.paidUpCapital ? formatPKR(detailItem.paidUpCapital) : "-"}</div>
+                <div><span className="text-muted-foreground">Ref #:</span> <span className="font-mono">{detailItem.secpRefNumber || "-"}</span></div>
+                <div><span className="text-muted-foreground">User:</span> {detailItem.user?.email}</div>
                 <div className="col-span-2">
-                  <span className="text-muted-foreground">Names:</span>
+                  <span className="text-muted-foreground">Names:</span>{" "}
                   {Array.isArray(detailItem.companyNames) ? detailItem.companyNames.join(", ") : "-"}
+                </div>
+              </div>
+
+              {/* Admin Document Upload */}
+              <div className="rounded-lg border border-border p-4 space-y-3">
+                <h4 className="text-sm font-semibold flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" /> Admin Document
+                </h4>
+                {detailItem.adminDocUrl ? (
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-primary" />
+                      <a href={`${BASE_URL}${detailItem.adminDocUrl}`} target="_blank" rel="noopener noreferrer"
+                        className="text-sm font-medium hover:text-primary transition-colors">
+                        {detailItem.adminDocName || "Download Document"}
+                      </a>
+                    </div>
+                    <a href={`${BASE_URL}${detailItem.adminDocUrl}`} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1" /> View</Button>
+                    </a>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No document uploaded yet</p>
+                )}
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    ref={docUploadRef}
+                    type="file"
+                    accept="image/*,.pdf"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file && detailItem) uploadDocMutation.mutate({ id: detailItem.id, file });
+                    }}
+                  />
+                  <Button variant="outline" size="sm" onClick={() => docUploadRef.current?.click()}
+                    disabled={uploadDocMutation.isPending}>
+                    <Upload className="h-4 w-4 mr-1" />
+                    {uploadDocMutation.isPending ? "Uploading..." : "Upload Document"}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -137,6 +199,8 @@ export default function SECPManagement() {
           <DialogFooter><Button onClick={() => setViewOpen(false)}>Close</Button></DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Dialog */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent className="sm:max-w-md rounded-xl">
           <DialogHeader><DialogTitle>Update SECP Registration</DialogTitle></DialogHeader>

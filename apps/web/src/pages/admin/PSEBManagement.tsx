@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { Search, Eye, FileText } from "lucide-react";
+import { Search, Eye, FileText, Upload, Download } from "lucide-react";
 import api from "@/lib/api";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -21,6 +21,8 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { formatDate } from "@/lib/utils";
 
+const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "");
+
 const psebStatusOptions = [
   "DRAFT", "SUBMITTED", "PRIMARY_APPROVED", "PAYMENT_PENDING",
   "PAYMENT_SUBMITTED", "APPROVED", "REJECTED", "REQUIRES_INFO",
@@ -37,6 +39,8 @@ export default function PSEBManagement() {
   const [companyDetail, setCompanyDetail] = useState<any>(null);
   const [ccDetailOpen, setCcDetailOpen] = useState(false);
   const [ccDetail, setCcDetail] = useState<any>(null);
+  const companyDocRef = useRef<HTMLInputElement>(null);
+  const ccDocRef = useRef<HTMLInputElement>(null);
 
   const [reviewForm, setReviewForm] = useState({
     status: "", adminNotes: "", psebRefNumber: "", certificateUrl: "",
@@ -87,6 +91,40 @@ export default function PSEBManagement() {
       setCcDetailOpen(false);
     },
     onError: () => toast.error("Failed to update"),
+  });
+
+  const uploadCompanyDocMutation = useMutation({
+    mutationFn: async ({ id, file }: { id: string; file: File }) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await api.post(`/pseb/admin/company/${id}/upload-doc`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return res.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-pseb-company"] });
+      if (companyDetail) setCompanyDetail({ ...companyDetail, adminDocUrl: data.data?.url, adminDocName: data.data?.name });
+      toast.success("Document uploaded successfully");
+    },
+    onError: () => toast.error("Failed to upload document"),
+  });
+
+  const uploadCCDocMutation = useMutation({
+    mutationFn: async ({ id, file }: { id: string; file: File }) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await api.post(`/pseb/admin/call-center/${id}/upload-doc`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return res.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-pseb-call-center"] });
+      if (ccDetail) setCcDetail({ ...ccDetail, adminDocUrl: data.data?.url, adminDocName: data.data?.name });
+      toast.success("Document uploaded successfully");
+    },
+    onError: () => toast.error("Failed to upload document"),
   });
 
   const openCompanyDetail = (item: any) => {
@@ -356,6 +394,39 @@ export default function PSEBManagement() {
                 )}
               </div>
 
+              {/* Admin Document Upload */}
+              <div className="rounded-lg border border-border p-4 space-y-3">
+                <h4 className="text-sm font-semibold flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" /> Admin Document (visible to user)
+                </h4>
+                {companyDetail.adminDocUrl ? (
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-primary" />
+                      <a href={`${BASE_URL}${companyDetail.adminDocUrl}`} target="_blank" rel="noopener noreferrer"
+                        className="text-sm font-medium hover:text-primary transition-colors">
+                        {companyDetail.adminDocName || "Download Document"}
+                      </a>
+                    </div>
+                    <a href={`${BASE_URL}${companyDetail.adminDocUrl}`} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1" /> View</Button>
+                    </a>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No document uploaded yet</p>
+                )}
+                <input ref={companyDocRef} type="file" accept="image/*,.pdf" className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file && companyDetail) uploadCompanyDocMutation.mutate({ id: companyDetail.id, file });
+                  }} />
+                <Button variant="outline" size="sm" onClick={() => companyDocRef.current?.click()}
+                  disabled={uploadCompanyDocMutation.isPending}>
+                  <Upload className="h-4 w-4 mr-1" />
+                  {uploadCompanyDocMutation.isPending ? "Uploading..." : "Upload Document"}
+                </Button>
+              </div>
+
               <div className="border-t pt-4 space-y-4">
                 <h4 className="text-sm font-semibold">Review & Update</h4>
                 <div className="space-y-1.5">
@@ -560,6 +631,39 @@ export default function PSEBManagement() {
                  (!ccDetail.officePhotosUrl || ccDetail.officePhotosUrl.length === 0) && (
                   <p className="text-sm text-muted-foreground">No documents uploaded</p>
                 )}
+              </div>
+
+              {/* Admin Document Upload */}
+              <div className="rounded-lg border border-border p-4 space-y-3">
+                <h4 className="text-sm font-semibold flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" /> Admin Document (visible to user)
+                </h4>
+                {ccDetail.adminDocUrl ? (
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-primary" />
+                      <a href={`${BASE_URL}${ccDetail.adminDocUrl}`} target="_blank" rel="noopener noreferrer"
+                        className="text-sm font-medium hover:text-primary transition-colors">
+                        {ccDetail.adminDocName || "Download Document"}
+                      </a>
+                    </div>
+                    <a href={`${BASE_URL}${ccDetail.adminDocUrl}`} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1" /> View</Button>
+                    </a>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No document uploaded yet</p>
+                )}
+                <input ref={ccDocRef} type="file" accept="image/*,.pdf" className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file && ccDetail) uploadCCDocMutation.mutate({ id: ccDetail.id, file });
+                  }} />
+                <Button variant="outline" size="sm" onClick={() => ccDocRef.current?.click()}
+                  disabled={uploadCCDocMutation.isPending}>
+                  <Upload className="h-4 w-4 mr-1" />
+                  {uploadCCDocMutation.isPending ? "Uploading..." : "Upload Document"}
+                </Button>
               </div>
 
               {ccDetail.inspectionDate && (

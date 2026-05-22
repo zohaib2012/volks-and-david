@@ -412,6 +412,8 @@ model SecpRegistration {
   status           String   @default("PENDING")
   secpRefNumber    String?
   fee              Float?
+  adminDocUrl      String?
+  adminDocName     String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -691,6 +693,8 @@ model PsebCompanyRegistration {
   psebRefNumber     String?
   certificateUrl    String?
   adminNotes        String?
+  adminDocUrl       String?
+  adminDocName      String?
   fee               Float?
   paymentReceiptUrl String?
 
@@ -754,6 +758,8 @@ model PsebCallCenterRegistration {
   inspectionDate      DateTime?
   inspectionNotes     String?
   adminNotes          String?
+  adminDocUrl         String?
+  adminDocName        String?
   fee                 Float?
   paymentReceiptUrl   String?
   isBranch            Boolean   @default(false)

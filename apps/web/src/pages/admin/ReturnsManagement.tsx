@@ -630,12 +630,12 @@ export default function ReturnsManagement() {
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                     <div className="flex items-center gap-2">
                       <FileText className="h-5 w-5 text-primary" />
-                      <a href={(review.item as any).adminDocUrl} target="_blank" rel="noopener noreferrer"
+                      <a href={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${(review.item as any).adminDocUrl}`} target="_blank" rel="noopener noreferrer"
                         className="text-sm font-medium hover:text-primary transition-colors">
                         {(review.item as any).adminDocName || "Download Document"}
                       </a>
                     </div>
-                    <a href={(review.item as any).adminDocUrl} target="_blank" rel="noopener noreferrer">
+                    <a href={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${(review.item as any).adminDocUrl}`} target="_blank" rel="noopener noreferrer">
                       <Button variant="outline" size="sm">
                         <Download className="h-4 w-4 mr-1" /> View
                       </Button>

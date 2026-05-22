@@ -164,10 +164,10 @@ export default function TaxReturnDetail() {
         {data.adminDocUrl && (
           <Card className="md:col-span-2 border-primary/20">
             <CardHeader>
-              <CardTitle className="text-base">Admin Document</CardTitle>
+              <CardTitle className="text-base">Document from Admin</CardTitle>
             </CardHeader>
             <CardContent>
-              <a href={data.adminDocUrl} target="_blank" rel="noopener noreferrer">
+              <a href={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${data.adminDocUrl}`} target="_blank" rel="noopener noreferrer">
                 <Button>
                   <Download className="h-4 w-4 mr-2" /> {data.adminDocName || "Download Document"}
                 </Button>

@@ -88,6 +88,7 @@ router.put("/gst/:id", controller.updateGst);
 // SECP / Business Registrations
 router.get("/secp", controller.listSecp);
 router.put("/secp/:id", controller.updateSecp);
+router.post("/secp/:id/upload-doc", upload.single("file"), controller.uploadSecpDoc);
 
 // IP Registrations (Patent, Trademark, Copyright)
 router.get("/ip-registrations", controller.listIpRegistrations);

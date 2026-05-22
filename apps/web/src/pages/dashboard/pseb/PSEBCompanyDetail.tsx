@@ -13,6 +13,8 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { formatDate } from "@/lib/utils";
 
+const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "");
+
 const statusColors: Record<string, string> = {
   DRAFT: "bg-gray-100 text-gray-700",
   SUBMITTED: "bg-blue-100 text-blue-700",
@@ -250,6 +252,21 @@ export default function PSEBCompanyDetail() {
             )}
           </div>
         </CardContent></Card>
+
+      {record.adminDocUrl && (
+        <Card className="border-primary/20">
+          <CardHeader><CardTitle className="text-sm flex items-center gap-2">
+            <FileText className="h-4 w-4 text-primary" /> Document from Admin
+          </CardTitle></CardHeader>
+          <CardContent>
+            <a href={`${BASE_URL}${record.adminDocUrl}`} target="_blank" rel="noopener noreferrer">
+              <Button>
+                <Download className="h-4 w-4 mr-2" /> {record.adminDocName || "Download Document"}
+              </Button>
+            </a>
+          </CardContent>
+        </Card>
+      )}
 
       {record.adminNotes && (
         <Card className="border-purple-200"><CardHeader><CardTitle className="text-sm text-purple-700">Admin Notes</CardTitle></CardHeader>
