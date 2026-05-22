@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm install -g pnpm@8 --silent && cd ../.. && pnpm install --frozen-lockfile",
+  "installCommand": "npm install -g pnpm@8 --silent && cd ../.. && pnpm install --no-frozen-lockfile",
   "buildCommand": "pnpm run build",
   "outputDirectory": "dist",
   "rewrites": [
