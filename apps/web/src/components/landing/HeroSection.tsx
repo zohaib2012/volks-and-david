@@ -37,12 +37,11 @@ const stats = [
 
 function calcTax(income: number): number {
   if (income <= 600000) return 0
-  if (income <= 1200000) return (income - 600000) * 0.05
-  if (income <= 2400000) return 30000 + (income - 1200000) * 0.15
-  if (income <= 3600000) return 210000 + (income - 2400000) * 0.2
-  if (income <= 6000000) return 450000 + (income - 3600000) * 0.25
-  if (income <= 12000000) return 1050000 + (income - 6000000) * 0.325
-  return 3000000 + (income - 12000000) * 0.35
+  if (income <= 1200000) return (income - 600000) * 0.01
+  if (income <= 2200000) return 6000 + (income - 1200000) * 0.11
+  if (income <= 3200000) return 116000 + (income - 2200000) * 0.23
+  if (income <= 4100000) return 346000 + (income - 3200000) * 0.30
+  return 616000 + (income - 4100000) * 0.35
 }
 
 function fmtPKR(n: number): string {
@@ -53,7 +52,7 @@ function fmtPKR(n: number): string {
 }
 
 export default function HeroSection() {
-  const [activeTab, setActiveTab] = useState<"dashboard" | "calculator">("dashboard")
+  const [activeTab, setActiveTab] = useState<"dashboard" | "calculator">("calculator")
   const [income, setIncome] = useState("")
 
   const incomeNum = parseFloat(income.replace(/,/g, "")) || 0
@@ -204,7 +203,7 @@ export default function HeroSection() {
                     </button>
                   </div>
                   <span className="text-[10px] text-[#1A1A2E]/35 bg-[#21346E]/5 px-2 py-0.5 rounded-full">
-                    FY 2024-25
+                    FY 2025-26
                   </span>
                 </div>
 
@@ -342,13 +341,14 @@ export default function HeroSection() {
                     ) : (
                       /* Placeholder slabs */
                       <div className="rounded-xl border border-[#21346E]/8 bg-[#21346E]/[0.02] p-4 space-y-2">
-                        <p className="text-[11px] font-semibold text-[#1A1A2E]/50 mb-2">FBR Tax Slabs 2024-25</p>
+                        <p className="text-[11px] font-semibold text-[#1A1A2E]/50 mb-2">FBR Tax Slabs 2025-26</p>
                         {[
                           { range: "Up to Rs.6L", rate: "0%" },
-                          { range: "Rs.6L – 12L", rate: "5%" },
-                          { range: "Rs.12L – 24L", rate: "15%" },
-                          { range: "Rs.24L – 36L", rate: "20%" },
-                          { range: "Rs.36L+", rate: "25–35%" },
+                          { range: "Rs.6L – 12L", rate: "1%" },
+                          { range: "Rs.12L – 22L", rate: "11%" },
+                          { range: "Rs.22L – 32L", rate: "23%" },
+                          { range: "Rs.32L – 41L", rate: "30%" },
+                          { range: "Above Rs.41L", rate: "35%" },
                         ].map((slab) => (
                           <div key={slab.range} className="flex justify-between items-center">
                             <span className="text-[11px] text-[#1A1A2E]/50">{slab.range}</span>
@@ -369,7 +369,7 @@ export default function HeroSection() {
                     </Link>
 
                     <p className="text-[10px] text-[#1A1A2E]/30 text-center">
-                      Based on FBR Income Tax Ordinance 2001 (Salaried)
+                      Based on FBR Tax Slabs 2025-26 (Salaried)
                     </p>
                   </div>
                 )}
