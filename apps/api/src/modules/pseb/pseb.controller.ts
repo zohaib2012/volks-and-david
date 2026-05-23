@@ -1,32 +1,15 @@
 import { Request, Response } from "express";
-import path from "path";
-import fs from "fs";
-import multer from "multer";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { success, error } from "../../utils/response";
 import { psebService } from "./pseb.service";
+import { cloudUpload, uploadToCloud } from "../../lib/cloudinary";
 
-const UPLOADS_DIR = path.join(__dirname, "..", "..", "..", "uploads");
-
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (_req, file, cb) => {
-    if (file.mimetype.startsWith("image/") || file.mimetype === "application/pdf") cb(null, true);
-    else cb(new Error("Only images and PDFs allowed"));
-  },
-});
-
-export const uploadMiddleware = upload.single("file");
+export const uploadMiddleware = cloudUpload.single("file");
 
 export const uploadFile = asyncHandler(async (req: Request, res: Response) => {
   if (!req.file) return error(res, "No file uploaded", 400);
-  if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-  const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-  const ext = path.extname(req.file.originalname) || ".pdf";
-  const filename = `pseb-${unique}${ext}`;
-  fs.writeFileSync(path.join(UPLOADS_DIR, filename), req.file.buffer);
-  return success(res, { url: `/uploads/${filename}` }, "File uploaded");
+  const url = await uploadToCloud(req.file.buffer, req.file.originalname);
+  return success(res, { url }, "File uploaded");
 });
 
 export const listCompany = asyncHandler(async (req: Request, res: Response) => {
@@ -103,24 +86,14 @@ export const adminReviewCallCenter = asyncHandler(async (req: Request, res: Resp
 
 export const adminUploadCompanyDoc = asyncHandler(async (req: Request, res: Response) => {
   if (!req.file) return error(res, "No file uploaded", 400);
-  if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-  const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-  const ext = path.extname(req.file.originalname) || ".pdf";
-  const filename = `pseb-${unique}${ext}`;
-  fs.writeFileSync(path.join(UPLOADS_DIR, filename), req.file.buffer);
-  const url = `/uploads/${filename}`;
+  const url = await uploadToCloud(req.file.buffer, req.file.originalname);
   await psebService.updateCompany(req.params.id, { adminDocUrl: url, adminDocName: req.file.originalname });
   return success(res, { url, name: req.file.originalname }, "Document uploaded");
 });
 
 export const adminUploadCallCenterDoc = asyncHandler(async (req: Request, res: Response) => {
   if (!req.file) return error(res, "No file uploaded", 400);
-  if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-  const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-  const ext = path.extname(req.file.originalname) || ".pdf";
-  const filename = `pseb-${unique}${ext}`;
-  fs.writeFileSync(path.join(UPLOADS_DIR, filename), req.file.buffer);
-  const url = `/uploads/${filename}`;
+  const url = await uploadToCloud(req.file.buffer, req.file.originalname);
   await psebService.updateCallCenter(req.params.id, { adminDocUrl: url, adminDocName: req.file.originalname });
   return success(res, { url, name: req.file.originalname }, "Document uploaded");
 });

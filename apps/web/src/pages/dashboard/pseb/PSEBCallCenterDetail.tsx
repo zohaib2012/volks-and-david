@@ -11,9 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { formatDate } from "@/lib/utils";
-
-const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "");
+import { formatDate, resolveFileUrl } from "@/lib/utils";
 
 const statusColors: Record<string, string> = {
   DRAFT: "bg-gray-100 text-gray-700",
@@ -301,7 +299,7 @@ export default function PSEBCallCenterDetail() {
             <FileText className="h-4 w-4 text-primary" /> Document from Admin
           </CardTitle></CardHeader>
           <CardContent>
-            <a href={`${BASE_URL}${record.adminDocUrl}`} target="_blank" rel="noopener noreferrer">
+            <a href={resolveFileUrl(record.adminDocUrl)} target="_blank" rel="noopener noreferrer">
               <Button>
                 <Download className="h-4 w-4 mr-2" /> {record.adminDocName || "Download Document"}
               </Button>

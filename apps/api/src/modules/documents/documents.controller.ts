@@ -2,16 +2,18 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { success, error } from "../../utils/response";
 import { documentService } from "./documents.service";
+import { uploadToCloud } from "../../lib/cloudinary";
 
 export const upload = asyncHandler(async (req: Request, res: Response) => {
   const file = req.file as Express.Multer.File | undefined;
   if (!file) return error(res, "No file uploaded", 400);
+  const fileUrl = await uploadToCloud(file.buffer, file.originalname);
   const record = await documentService.create(req.user!.userId, {
     name: req.body.name || file.originalname,
     type: req.body.type || null,
     taxYear: req.body.taxYear || null,
     notes: req.body.notes || null,
-    fileUrl: `/uploads/${file.filename}`,
+    fileUrl,
     fileSize: file.size,
   });
   return success(res, record, "Document uploaded", 201);

@@ -8,7 +8,7 @@ import { DataTable, type Column } from "@/components/shared/DataTable";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDate } from "@/lib/utils";
+import { formatDate, resolveFileUrl } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { EmptyState } from "@/components/shared/EmptyState";
 
@@ -57,9 +57,8 @@ export default function NTNStatus() {
       render: (item) => {
         const docUrl = item.documents?.adminDocUrl;
         const docName = item.documents?.adminDocName;
-        const baseUrl = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "");
         return docUrl ? (
-          <a href={`${baseUrl}${docUrl}`} target="_blank" rel="noopener noreferrer">
+          <a href={resolveFileUrl(docUrl)} target="_blank" rel="noopener noreferrer">
             <Button variant="ghost" size="sm">
               <Download className="h-4 w-4 mr-1" /> {docName || "Download"}
             </Button>

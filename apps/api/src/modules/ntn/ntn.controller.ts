@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { success, error } from "../../utils/response";
 import { ntnService } from "./ntn.service";
+import { uploadToCloud } from "../../lib/cloudinary";
 
 export const list = asyncHandler(async (req: Request, res: Response) => {
   const records = await ntnService.list(req.user!.userId);
@@ -26,10 +27,9 @@ export const uploadFiles = asyncHandler(async (req: Request, res: Response) => {
   const urls: Record<string, { url: string; originalName: string }> = {};
   for (const [field, fieldFiles] of Object.entries(files)) {
     if (fieldFiles.length > 0) {
-      urls[field] = {
-        url: `/uploads/${fieldFiles[0].filename}`,
-        originalName: fieldFiles[0].originalname,
-      };
+      const file = fieldFiles[0];
+      const url = await uploadToCloud(file.buffer, file.originalname);
+      urls[field] = { url, originalName: file.originalname };
     }
   }
   return success(res, urls);

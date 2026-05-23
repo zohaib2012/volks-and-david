@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import { formatPKR, formatDate } from "@/lib/utils";
+import { formatPKR, formatDate, resolveFileUrl } from "@/lib/utils";
 import { useState } from "react";
 import {
   Dialog,
@@ -17,8 +17,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-
-const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "");
 
 interface SecpRecord {
   id: string;
@@ -157,7 +155,7 @@ export default function SECPRegistrationHistory() {
                   <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
                     <FileText className="h-4 w-4 text-primary" /> Document from Admin
                   </h4>
-                  <a href={`${BASE_URL}${selected.adminDocUrl}`} target="_blank" rel="noopener noreferrer">
+                  <a href={resolveFileUrl(selected.adminDocUrl)} target="_blank" rel="noopener noreferrer">
                     <Button size="sm">
                       <Download className="h-4 w-4 mr-2" /> {selected.adminDocName || "Download Document"}
                     </Button>

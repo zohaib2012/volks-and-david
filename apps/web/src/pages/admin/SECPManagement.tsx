@@ -16,9 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { formatPKR, formatDate } from "@/lib/utils";
-
-const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "");
+import { formatPKR, formatDate, resolveFileUrl } from "@/lib/utils";
 
 interface SecpRecord {
   id: string;
@@ -164,12 +162,12 @@ export default function SECPManagement() {
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                     <div className="flex items-center gap-2">
                       <FileText className="h-5 w-5 text-primary" />
-                      <a href={`${BASE_URL}${detailItem.adminDocUrl}`} target="_blank" rel="noopener noreferrer"
+                      <a href={resolveFileUrl(detailItem.adminDocUrl)} target="_blank" rel="noopener noreferrer"
                         className="text-sm font-medium hover:text-primary transition-colors">
                         {detailItem.adminDocName || "Download Document"}
                       </a>
                     </div>
-                    <a href={`${BASE_URL}${detailItem.adminDocUrl}`} target="_blank" rel="noopener noreferrer">
+                    <a href={resolveFileUrl(detailItem.adminDocUrl)} target="_blank" rel="noopener noreferrer">
                       <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1" /> View</Button>
                     </a>
                   </div>

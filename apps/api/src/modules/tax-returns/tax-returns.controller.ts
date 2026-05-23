@@ -1,12 +1,8 @@
 import { Request, Response } from "express";
-import fs from "fs";
-import path from "path";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { success, error, paginated } from "../../utils/response";
 import { taxReturnService } from "./tax-returns.service";
-
-// __dirname = apps/api/src/modules/tax-returns  →  ../../..  =  apps/api
-const UPLOADS_DIR = path.join(__dirname, "..", "..", "..", "uploads");
+import { uploadToCloud } from "../../lib/cloudinary";
 
 export const list = asyncHandler(async (req: Request, res: Response) => {
   const { page = "1", limit = "10", ...filters } = req.query;
@@ -47,10 +43,6 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
 
 export const uploadCnic = asyncHandler(async (req: Request, res: Response) => {
   if (!req.file) return error(res, "No file uploaded", 400);
-  const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-  const ext = path.extname(req.file.originalname) || ".jpg";
-  const filename = `cnic-${unique}${ext}`;
-  if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-  fs.writeFileSync(path.join(UPLOADS_DIR, filename), req.file.buffer);
-  return success(res, { url: `/uploads/${filename}` }, "File uploaded");
+  const url = await uploadToCloud(req.file.buffer, req.file.originalname);
+  return success(res, { url }, "File uploaded");
 });

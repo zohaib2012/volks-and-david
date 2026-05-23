@@ -47,3 +47,11 @@ export function formatPhone(phone: string): string {
   if (cleaned.length <= 7) return `${cleaned.slice(0, 4)}-${cleaned.slice(4)}`
   return `${cleaned.slice(0, 4)}-${cleaned.slice(4, 7)}-${cleaned.slice(7, 11)}`
 }
+
+const _BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "");
+
+export function resolveFileUrl(url: string | null | undefined): string {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  return `${_BASE_URL}${url}`;
+}

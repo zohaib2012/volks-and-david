@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { success, paginated } from "../../utils/response";
 import { adminService } from "./admin.service";
+import { uploadToCloud } from "../../lib/cloudinary";
 
 export const dashboardStats = asyncHandler(
   async (req: Request, res: Response) => {
@@ -256,7 +257,7 @@ export const updateNtn = asyncHandler(async (req: Request, res: Response) => {
 
 export const uploadNtnDoc = asyncHandler(async (req: Request, res: Response) => {
   if (!req.file) return res.status(400).json({ success: false, message: "No file uploaded" });
-  const url = `/uploads/${req.file.filename}`;
+  const url = await uploadToCloud(req.file.buffer, req.file.originalname);
   const current = await adminService.getNtnById(req.params.id);
   const currentDocs = (current?.documents as any) || {};
   await adminService.updateNtn(req.params.id, {
@@ -267,7 +268,7 @@ export const uploadNtnDoc = asyncHandler(async (req: Request, res: Response) => 
 
 export const uploadReturnDoc = asyncHandler(async (req: Request, res: Response) => {
   if (!req.file) return res.status(400).json({ success: false, message: "No file uploaded" });
-  const url = `/uploads/${req.file.filename}`;
+  const url = await uploadToCloud(req.file.buffer, req.file.originalname);
   await adminService.updateTaxReturn(req.params.id, {
     adminDocUrl: url,
     adminDocName: req.file.originalname,
@@ -277,7 +278,7 @@ export const uploadReturnDoc = asyncHandler(async (req: Request, res: Response) 
 
 export const uploadSecpDoc = asyncHandler(async (req: Request, res: Response) => {
   if (!req.file) return res.status(400).json({ success: false, message: "No file uploaded" });
-  const url = `/uploads/${req.file.filename}`;
+  const url = await uploadToCloud(req.file.buffer, req.file.originalname);
   await adminService.updateSecp(req.params.id, {
     adminDocUrl: url,
     adminDocName: req.file.originalname,
@@ -444,7 +445,7 @@ export const uploadImage = asyncHandler(
     if (!req.file) {
       return res.status(400).json({ success: false, message: "No file uploaded" });
     }
-    const url = `/uploads/${req.file.filename}`;
-    return success(res, { url, filename: req.file.filename }, "Image uploaded");
+    const url = await uploadToCloud(req.file.buffer, req.file.originalname);
+    return success(res, { url, filename: req.file.originalname }, "Image uploaded");
   },
 );

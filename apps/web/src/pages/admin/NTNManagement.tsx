@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { formatDate } from "@/lib/utils";
+import { formatDate, resolveFileUrl } from "@/lib/utils";
 
 interface NtnRecord {
   id: string;
@@ -266,12 +266,12 @@ export default function NTNManagement() {
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                     <div className="flex items-center gap-2">
                       <FileText className="h-5 w-5 text-primary" />
-                      <a href={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || 'http://localhost:5001'}${detailItem.documents.adminDocUrl}`} target="_blank" rel="noopener noreferrer"
+                      <a href={resolveFileUrl(detailItem.documents.adminDocUrl)} target="_blank" rel="noopener noreferrer"
                         className="text-sm font-medium hover:text-primary transition-colors">
                         {detailItem.documents.adminDocName || "Download Document"}
                       </a>
                     </div>
-                    <a href={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || 'http://localhost:5001'}${detailItem.documents.adminDocUrl}`} target="_blank" rel="noopener noreferrer">
+                    <a href={resolveFileUrl(detailItem.documents.adminDocUrl)} target="_blank" rel="noopener noreferrer">
                       <Button variant="outline" size="sm">
                         <Download className="h-4 w-4 mr-1" /> View
                       </Button>

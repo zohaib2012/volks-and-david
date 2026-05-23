@@ -41,7 +41,7 @@ import {
 } from "@/components/ui/select";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { formatPKR, formatDate } from "@/lib/utils";
+import { formatPKR, formatDate, resolveFileUrl } from "@/lib/utils";
 
 type TaxReturnStatus =
   | "DRAFT"
@@ -587,12 +587,12 @@ export default function ReturnsManagement() {
                         <div>
                           <Label className="text-xs text-muted-foreground block mb-1">CNIC Front</Label>
                           <a
-                            href={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${review.item.cnicFrontUrl}`}
+                            href={resolveFileUrl(review.item.cnicFrontUrl)}
                             target="_blank"
                             rel="noreferrer"
                           >
                             <img
-                              src={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${review.item.cnicFrontUrl}`}
+                              src={resolveFileUrl(review.item.cnicFrontUrl)}
                               alt="CNIC Front"
                               className="w-full h-28 object-cover rounded-lg border border-border hover:opacity-80 transition-opacity"
                             />
@@ -603,12 +603,12 @@ export default function ReturnsManagement() {
                         <div>
                           <Label className="text-xs text-muted-foreground block mb-1">CNIC Back</Label>
                           <a
-                            href={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${review.item.cnicBackUrl}`}
+                            href={resolveFileUrl(review.item.cnicBackUrl)}
                             target="_blank"
                             rel="noreferrer"
                           >
                             <img
-                              src={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${review.item.cnicBackUrl}`}
+                              src={resolveFileUrl(review.item.cnicBackUrl)}
                               alt="CNIC Back"
                               className="w-full h-28 object-cover rounded-lg border border-border hover:opacity-80 transition-opacity"
                             />
@@ -632,12 +632,12 @@ export default function ReturnsManagement() {
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                     <div className="flex items-center gap-2">
                       <FileText className="h-5 w-5 text-primary" />
-                      <a href={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${(review.item as any).adminDocUrl}`} target="_blank" rel="noopener noreferrer"
+                      <a href={resolveFileUrl((review.item as any).adminDocUrl)} target="_blank" rel="noopener noreferrer"
                         className="text-sm font-medium hover:text-primary transition-colors">
                         {(review.item as any).adminDocName || "Download Document"}
                       </a>
                     </div>
-                    <a href={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${(review.item as any).adminDocUrl}`} target="_blank" rel="noopener noreferrer">
+                    <a href={resolveFileUrl((review.item as any).adminDocUrl)} target="_blank" rel="noopener noreferrer">
                       <Button variant="outline" size="sm">
                         <Download className="h-4 w-4 mr-1" /> View
                       </Button>

@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { formatPKR, formatDate } from "@/lib/utils";
+import { formatPKR, formatDate, resolveFileUrl } from "@/lib/utils";
 
 interface TaxReturnDetailData {
   id: string;
@@ -167,7 +167,7 @@ export default function TaxReturnDetail() {
               <CardTitle className="text-base">Document from Admin</CardTitle>
             </CardHeader>
             <CardContent>
-              <a href={`${(import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "")}${data.adminDocUrl}`} target="_blank" rel="noopener noreferrer">
+              <a href={resolveFileUrl(data.adminDocUrl)} target="_blank" rel="noopener noreferrer">
                 <Button>
                   <Download className="h-4 w-4 mr-2" /> {data.adminDocName || "Download Document"}
                 </Button>
