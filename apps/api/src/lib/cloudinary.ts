@@ -9,9 +9,12 @@ cloudinary.config({
 });
 
 export async function uploadToCloud(buffer: Buffer, originalname: string): Promise<string> {
+  const ext = originalname.split(".").pop()?.toLowerCase();
+  const resourceType = ext === "pdf" ? "raw" : "image";
+
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: "volks-and-david", resource_type: "auto", use_filename: false },
+      { folder: "volks-and-david", resource_type: resourceType, use_filename: false, access_mode: "public" },
       (err, result) => {
         if (err) reject(err);
         else resolve(result!.secure_url);
