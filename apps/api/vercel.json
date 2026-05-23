@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm install --legacy-peer-deps --ignore-scripts",
+  "installCommand": "npm install --legacy-peer-deps --ignore-scripts --include=dev",
   "buildCommand": "node_modules/.bin/prisma generate --schema=prisma/schema.prisma",
   "routes": [
     {
