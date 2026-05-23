@@ -16,6 +16,7 @@ export async function uploadToCloud(buffer: Buffer, originalname: string): Promi
   const uploadOptions = {
     folder: "volks-and-david",
     resource_type: resourceType as "raw" | "image" | "auto" | "video",
+    type: "upload" as const,
     access_mode: "public" as const,
     ...(resourceType === "raw"
       ? { public_id: `${uniqueId}.${ext}` }
