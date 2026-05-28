@@ -204,14 +204,14 @@ function WhatsAppFloat() {
 
 /* ─── Trusted By / Client Logos ─── */
 const clients = [
-  { initials: 'TC', name: 'TechCorp', color: '#21346E' },
-  { initials: 'GS', name: 'GlobalSol', color: '#C8952E' },
-  { initials: 'AB', name: 'AlphaBiz', color: '#F59E0B' },
-  { initials: 'PL', name: 'PrimeLegal', color: '#8B5CF6' },
-  { initials: 'SF', name: 'SkyFin', color: '#EC4899' },
-  { initials: 'DC', name: 'DigiCrest', color: '#06B6D4' },
-  { initials: 'MP', name: 'MetroProp', color: '#F97316' },
-  { initials: 'BH', name: 'BlueHrzn', color: '#6366F1' },
+  { initials: 'HT', name: 'Hashim Traders', color: '#21346E' },
+  { initials: 'ZF', name: 'Zaman Fabrics', color: '#C8952E' },
+  { initials: 'KD', name: 'Karachi Digital', color: '#F59E0B' },
+  { initials: 'AS', name: 'Arif & Sons', color: '#8B5CF6' },
+  { initials: 'NL', name: 'Nova Logistics', color: '#06B6D4' },
+  { initials: 'BF', name: 'BlueFin Capital', color: '#F97316' },
+  { initials: 'RM', name: 'Royal Motors', color: '#EC4899' },
+  { initials: 'IT', name: 'Islamabad Tech', color: '#6366F1' },
 ]
 
 function TrustedBySection() {
@@ -325,16 +325,19 @@ function WhyChooseUsSection() {
 /* ─── Case Studies / Success Stories ─── */
 const caseStudies = [
   {
-    quote: 'Volks & David structured our entire tax strategy from scratch. We saved over Rs. 2.5M in our first year alone — more than we ever expected.',
-    metric: 'Rs. 2.5M', metricLabel: 'Tax Savings', industry: 'Startup / SaaS', tag: 'Tax Planning', accent: '#21346E',
+    quote: 'Volks & David restructured our entire tax setup from the ground up. We saved over Rs. 2.5M in our first year — far beyond what we anticipated.',
+    metric: 'Rs. 2.5M', metricLabel: 'Tax Savings in Year 1', industry: 'SaaS / Technology', tag: 'Tax Planning', accent: '#21346E',
+    author: 'Usman Tariq', designation: 'CEO, NexaLabs Pvt. Ltd.',
   },
   {
-    quote: 'We needed our SECP registration completed urgently. They delivered the certificate in less than 24 hours — absolutely incredible service.',
-    metric: '24 Hours', metricLabel: 'Turnaround', industry: 'E-Commerce', tag: 'Business Setup', accent: '#C8952E',
+    quote: 'We had a hard deadline for our SECP registration. Volks & David delivered the incorporation certificate within 24 hours — when every other firm said it would take a week.',
+    metric: '24 Hours', metricLabel: 'SECP Turnaround', industry: 'E-Commerce', tag: 'Business Setup', accent: '#C8952E',
+    author: 'Hira Mahmood', designation: 'Founder, ShopEase.pk',
   },
   {
-    quote: 'Our trademark was registered in just 60 days. The team handled all filings, objections, and follow-ups. Completely hassle-free experience.',
-    metric: '60 Days', metricLabel: 'Trademark Registration', industry: 'Retail / FMCG', tag: 'IP Protection', accent: '#8B5CF6',
+    quote: 'The team managed every stage of our trademark filing — from submission to responding to examiner objections — without us having to lift a finger. Registered in 60 days flat.',
+    metric: '60 Days', metricLabel: 'Trademark Registered', industry: 'Retail / Consumer Goods', tag: 'IP Protection', accent: '#8B5CF6',
+    author: 'Bilal Cheema', designation: 'Director, Cheema Industries',
   },
 ]
 
@@ -381,9 +384,18 @@ function CaseStudiesSection() {
                 style={{ background: `linear-gradient(135deg, ${cs.accent}12, transparent 60%)` }} />
               <div className="relative z-10 p-7 flex flex-col h-full">
                 <QuoteIcon className="h-6 w-6 mb-3 opacity-30" style={{ color: cs.accent }} />
-                <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-6 italic">
+                <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-5 italic">
                   &ldquo;{cs.quote}&rdquo;
                 </p>
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="h-8 w-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0" style={{ background: cs.accent }}>
+                    {cs.author.split(' ').map((w: string) => w[0]).join('').slice(0, 2)}
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold">{cs.author}</p>
+                    <p className="text-[11px] text-muted-foreground/70">{cs.designation}</p>
+                  </div>
+                </div>
                 <div className="mb-4">
                   <p className="text-3xl font-black" style={{ color: cs.accent }}>{cs.metric}</p>
                   <p className="text-xs text-muted-foreground font-medium">{cs.metricLabel}</p>
