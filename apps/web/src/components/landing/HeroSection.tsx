@@ -68,7 +68,7 @@ export default function HeroSection() {
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 1.5 }}
-        className="fixed right-4 top-28 z-40 hidden lg:block"
+        className="fixed right-4 top-28 z-40"
       >
         <Link
           to="/usa-services"
@@ -161,10 +161,10 @@ export default function HeroSection() {
             </motion.div>
           </div>
 
-          {/* RIGHT: Dashboard + Calculator Card */}
+          {/* RIGHT: Calculator Card */}
           <motion.div
             variants={itemVariants}
-            className="hidden lg:flex items-center justify-center"
+            className="flex items-center justify-center"
           >
             <div className="relative w-full max-w-[480px]">
               {/* Glow behind card */}
