@@ -223,8 +223,8 @@ export default function HeroSection() {
                           <p className="text-sm font-bold text-[#C8952E]">{fmtPKR(monthlyTakeHome)}</p>
                         </div>
                         <div className="rounded-lg bg-white p-2.5 border border-[#21346E]/8">
-                          <p className="text-[10px] text-[#1A1A2E]/40 mb-0.5">Eff. Rate</p>
-                          <p className="text-sm font-bold text-[#10B981]">{effectiveRate}%</p>
+                          <p className="text-[10px] text-[#1A1A2E]/40 mb-0.5">Annual Tax</p>
+                          <p className="text-sm font-bold text-[#10B981]">{fmtPKR(annualTax)}</p>
                         </div>
                       </div>
 
