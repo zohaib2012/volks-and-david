@@ -43,7 +43,7 @@ function calcTax(income: number): number {
 function fmtPKR(n: number): string {
   if (n >= 1000000) return `Rs.${(n / 1000000).toFixed(2)}M`
   if (n >= 100000) return `Rs.${(n / 100000).toFixed(1)}L`
-  if (n >= 1000) return `Rs.${(n / 1000).toFixed(0)}K`
+  if (n >= 1000) return `Rs.${(n / 1000).toFixed(1)}K`
   return `Rs.${Math.round(n)}`
 }
 
