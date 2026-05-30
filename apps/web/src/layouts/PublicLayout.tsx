@@ -32,7 +32,7 @@ export default function PublicLayout() {
             Get Free Consultation
           </Button>
           <a
-            href="https://wa.me/923022999904"
+            href="https://wa.me/923100000377"
             target="_blank"
             rel="noopener noreferrer"
             className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500 text-white shadow-lg hover:bg-emerald-600 transition-colors"
@@ -41,7 +41,7 @@ export default function PublicLayout() {
             <MessageCircle className="h-5 w-5" />
           </a>
           <a
-            href="tel:+923022999904"
+            href="tel:+923100000377"
             className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors"
             aria-label="Call us"
           >

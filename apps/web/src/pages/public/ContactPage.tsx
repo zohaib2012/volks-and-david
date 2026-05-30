@@ -9,8 +9,8 @@ const contactInfo = [
   {
     icon: Phone,
     label: 'Phone',
-    value: '+92 300 1234567',
-    href: 'tel:+923001234567',
+    value: '+92 310 0000377',
+    href: 'tel:+923100000377',
   },
   {
     icon: Mail,

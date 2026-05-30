@@ -144,7 +144,7 @@ const localBusinessSchema = {
   name: 'Volks & David',
   image: '/volksanddavid.png',
   url: pageUrl,
-  telephone: '+92 302 2999904',
+  telephone: '+92 310 0000377',
   email: 'info@volksanddavid.com',
   description:
     "Pakistan's #1 Premium Tax Filing & Financial Services Platform. File your tax returns, register for NTN, GST, and more with expert assistance.",
@@ -182,7 +182,7 @@ function WhatsAppFloat() {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
       <motion.a
-        href="https://wa.me/923022999904"
+        href="https://wa.me/923100000377"
         target="_blank"
         rel="noopener noreferrer"
         className="group relative flex h-14 w-14 items-center justify-center rounded-full shadow-2xl"
