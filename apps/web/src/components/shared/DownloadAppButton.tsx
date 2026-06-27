@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import { Button } from "@/components/ui/button";
-import { Download, Smartphone, X } from "lucide-react";
+import { Download, Smartphone, X, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DownloadAppButtonProps {
@@ -79,9 +79,19 @@ export default function DownloadAppButton({
                 Install App
               </h3>
               <p className="mb-4 text-sm text-gray-500">
-                {isIOS
-                  ? 'Tap the Share button <svg class="inline-block h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> in Safari, then scroll down and tap <strong>Add to Home Screen</strong>.'
-                  : "Open the browser menu and tap <strong>Add to Home Screen</strong> or <strong>Install</strong>."}
+                {isIOS ? (
+                  <>
+                    Tap the Share button{" "}
+                    <Share2 className="inline-block h-4 w-4" /> in Safari, then
+                    scroll down and tap <strong>Add to Home Screen</strong>.
+                  </>
+                ) : (
+                  <>
+                    Open the browser menu and tap{" "}
+                    <strong>Add to Home Screen</strong> or{" "}
+                    <strong>Install</strong>.
+                  </>
+                )}
               </p>
               <Button className="w-full" onClick={() => setShowGuide(false)}>
                 Got it
