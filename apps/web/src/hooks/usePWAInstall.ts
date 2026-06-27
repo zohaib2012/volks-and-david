@@ -30,6 +30,12 @@ export function usePWAInstall() {
 
     setIsInstalled(alreadyInstalled);
 
+    const earlyEvent = (window as any).__deferredPrompt;
+    if (earlyEvent) {
+      setDeferredPrompt(earlyEvent);
+      (window as any).__deferredPrompt = null;
+    }
+
     const onBeforeInstall = (e: Event) => {
       e.preventDefault();
       const promptEvent = e as BeforeInstallPromptEvent;
@@ -57,9 +63,10 @@ export function usePWAInstall() {
   const install = useCallback(async () => {
     if (deferredPrompt) {
       await triggerPrompt(deferredPrompt);
-      return;
+      return true;
     }
     pendingInstallRef.current = true;
+    return false;
   }, [deferredPrompt, triggerPrompt]);
 
   return { isInstalled, install };
