@@ -1,7 +1,7 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import { Button } from "@/components/ui/button";
-import { Download, Smartphone, X, Share2 } from "lucide-react";
+import { Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DownloadAppButtonProps {
@@ -17,89 +17,23 @@ export default function DownloadAppButton({
   className,
   showLabel = true,
 }: DownloadAppButtonProps) {
-  const { canInstall, isInstalled, install } = usePWAInstall();
-  const [showGuide, setShowGuide] = useState(false);
+  const { isInstalled, install } = usePWAInstall();
 
-  const isIOS =
-    typeof navigator !== "undefined" &&
-    /iPad|iPhone|iPod/.test(navigator.userAgent) &&
-    !(window as any).MSStream;
+  const handleClick = useCallback(async () => {
+    await install();
+  }, [install]);
 
   if (isInstalled) return null;
 
-  const handleClick = useCallback(async () => {
-    const installed = await install();
-    if (!installed) {
-      setShowGuide(true);
-    }
-  }, [install]);
-
-  if (canInstall) {
-    return (
-      <Button
-        variant={variant}
-        size={size}
-        onClick={handleClick}
-        className={cn("gap-2", className)}
-      >
-        <Download className="h-4 w-4" />
-        {showLabel && <span>Download App</span>}
-      </Button>
-    );
-  }
-
-  if (!showLabel) return null;
-
   return (
-    <>
-      <Button
-        variant={variant}
-        size={size}
-        onClick={handleClick}
-        className={cn("gap-2", className)}
-      >
-        <Download className="h-4 w-4" />
-        <span>Download App</span>
-      </Button>
-
-      {showGuide && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 p-4">
-          <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
-            <button
-              onClick={() => setShowGuide(false)}
-              className="absolute right-3 top-3 rounded-full p-1 text-gray-400 hover:text-gray-600"
-            >
-              <X className="h-5 w-5" />
-            </button>
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#21346E]">
-                <Smartphone className="h-7 w-7 text-white" />
-              </div>
-              <h3 className="mb-2 text-lg font-bold text-gray-900">
-                Install App
-              </h3>
-              <p className="mb-4 text-sm text-gray-500">
-                {isIOS ? (
-                  <>
-                    Tap the Share button{" "}
-                    <Share2 className="inline-block h-4 w-4" /> in Safari, then
-                    scroll down and tap <strong>Add to Home Screen</strong>.
-                  </>
-                ) : (
-                  <>
-                    Open the browser menu and tap{" "}
-                    <strong>Add to Home Screen</strong> or{" "}
-                    <strong>Install</strong>.
-                  </>
-                )}
-              </p>
-              <Button className="w-full" onClick={() => setShowGuide(false)}>
-                Got it
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    <Button
+      variant={variant}
+      size={size}
+      onClick={handleClick}
+      className={cn("gap-2", className)}
+    >
+      <Download className="h-4 w-4" />
+      {showLabel && <span>Download App</span>}
+    </Button>
   );
 }
