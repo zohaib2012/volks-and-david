@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import { Button } from "@/components/ui/button";
 import { Download, Loader2 } from "lucide-react";
@@ -19,7 +19,13 @@ export default function DownloadAppButton({
 }: DownloadAppButtonProps) {
   const { isInstalled, install } = usePWAInstall();
   const [loading, setLoading] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const handleClick = useCallback(async () => {
     if (loading) return;
@@ -27,14 +33,18 @@ export default function DownloadAppButton({
 
     const installed = await install();
 
+    if (!mountedRef.current) return;
+
     if (installed) {
       setLoading(false);
       return;
     }
 
-    timeoutRef.current = setTimeout(() => {
-      setLoading(false);
-    }, 15000);
+    setTimeout(() => {
+      if (mountedRef.current) {
+        setLoading(false);
+      }
+    }, 60000);
   }, [install, loading]);
 
   if (isInstalled) return null;

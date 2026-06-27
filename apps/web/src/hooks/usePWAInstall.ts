@@ -5,6 +5,8 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
+const STORAGE_KEY = "volks_pwa_install_intent";
+
 export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
@@ -16,6 +18,7 @@ export function usePWAInstall() {
     const { outcome } = await e.userChoice;
     if (outcome === "accepted") {
       setIsInstalled(true);
+      localStorage.removeItem(STORAGE_KEY);
     }
     setDeferredPrompt(null);
     pendingInstallRef.current = false;
@@ -30,6 +33,10 @@ export function usePWAInstall() {
 
     setIsInstalled(alreadyInstalled);
 
+    if (localStorage.getItem(STORAGE_KEY)) {
+      pendingInstallRef.current = true;
+    }
+
     const earlyEvent = (window as any).__deferredPrompt;
     if (earlyEvent) {
       setDeferredPrompt(earlyEvent);
@@ -42,6 +49,7 @@ export function usePWAInstall() {
       setDeferredPrompt(promptEvent);
 
       if (pendingInstallRef.current) {
+        localStorage.removeItem(STORAGE_KEY);
         triggerPrompt(promptEvent);
       }
     };
@@ -49,6 +57,7 @@ export function usePWAInstall() {
     const onAppInstalled = () => {
       setIsInstalled(true);
       setDeferredPrompt(null);
+      localStorage.removeItem(STORAGE_KEY);
     };
 
     window.addEventListener("beforeinstallprompt", onBeforeInstall);
@@ -63,9 +72,11 @@ export function usePWAInstall() {
   const install = useCallback(async () => {
     if (deferredPrompt) {
       await triggerPrompt(deferredPrompt);
+      localStorage.removeItem(STORAGE_KEY);
       return true;
     }
     pendingInstallRef.current = true;
+    localStorage.setItem(STORAGE_KEY, "1");
     return false;
   }, [deferredPrompt, triggerPrompt]);
 
