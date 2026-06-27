@@ -1,7 +1,7 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DownloadAppButtonProps {
@@ -18,9 +18,12 @@ export default function DownloadAppButton({
   showLabel = true,
 }: DownloadAppButtonProps) {
   const { isInstalled, install } = usePWAInstall();
+  const [loading, setLoading] = useState(false);
 
   const handleClick = useCallback(async () => {
+    setLoading(true);
     await install();
+    setTimeout(() => setLoading(false), 3000);
   }, [install]);
 
   if (isInstalled) return null;
@@ -30,10 +33,15 @@ export default function DownloadAppButton({
       variant={variant}
       size={size}
       onClick={handleClick}
+      disabled={loading}
       className={cn("gap-2", className)}
     >
-      <Download className="h-4 w-4" />
-      {showLabel && <span>Download App</span>}
+      {loading ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <Download className="h-4 w-4" />
+      )}
+      {showLabel && <span>{loading ? "Preparing..." : "Download App"}</span>}
     </Button>
   );
 }

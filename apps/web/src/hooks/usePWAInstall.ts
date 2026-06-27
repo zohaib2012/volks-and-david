@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -9,6 +9,17 @@ export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const pendingInstallRef = useRef(false);
+
+  const triggerPrompt = useCallback(async (e: BeforeInstallPromptEvent) => {
+    e.prompt();
+    const { outcome } = await e.userChoice;
+    if (outcome === "accepted") {
+      setIsInstalled(true);
+    }
+    setDeferredPrompt(null);
+    pendingInstallRef.current = false;
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -21,7 +32,12 @@ export function usePWAInstall() {
 
     const onBeforeInstall = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
+      const promptEvent = e as BeforeInstallPromptEvent;
+      setDeferredPrompt(promptEvent);
+
+      if (pendingInstallRef.current) {
+        triggerPrompt(promptEvent);
+      }
     };
 
     const onAppInstalled = () => {
@@ -36,20 +52,15 @@ export function usePWAInstall() {
       window.removeEventListener("beforeinstallprompt", onBeforeInstall);
       window.removeEventListener("appinstalled", onAppInstalled);
     };
-  }, []);
+  }, [triggerPrompt]);
 
   const install = useCallback(async () => {
     if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === "accepted") {
-        setIsInstalled(true);
-      }
-      setDeferredPrompt(null);
-      return true;
+      await triggerPrompt(deferredPrompt);
+      return;
     }
-    return false;
-  }, [deferredPrompt]);
+    pendingInstallRef.current = true;
+  }, [deferredPrompt, triggerPrompt]);
 
-  return { canInstall: !!deferredPrompt, isInstalled, install };
+  return { isInstalled, install };
 }
