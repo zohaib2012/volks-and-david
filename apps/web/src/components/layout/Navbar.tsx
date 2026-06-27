@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { LanguageToggle } from "@/components/shared/LanguageToggle"
-import { useAuthStore } from "@/store/useAuthStore"
-import { Menu, X } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { LanguageToggle } from "@/components/shared/LanguageToggle";
+import DownloadAppButton from "@/components/shared/DownloadAppButton";
+import { useAuthStore } from "@/store/useAuthStore";
+import { Menu, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -16,30 +17,36 @@ const navLinks = [
   { label: "Blog", path: "/blog" },
   { label: "FAQ", path: "/faq" },
   { label: "Contact", path: "/contact" },
-]
+];
 
 export default function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const { isAuthenticated } = useAuthStore()
-  const navigate = useNavigate()
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const { isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener("scroll", onScroll)
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <nav className={cn(
-      "fixed top-0 z-50 w-full transition-all duration-300",
-      scrolled
-        ? "backdrop-blur-xl bg-background/80 border-b border-border/50 shadow-sm"
-        : "bg-transparent"
-    )}>
+    <nav
+      className={cn(
+        "fixed top-0 z-50 w-full transition-all duration-300",
+        scrolled
+          ? "backdrop-blur-xl bg-background/80 border-b border-border/50 shadow-sm"
+          : "bg-transparent",
+      )}
+    >
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5">
-          <img src="/volksanddavid-logo.svg" alt="Volks & David" className="h-10 w-auto" />
+          <img
+            src="/volksanddavid-logo.svg"
+            alt="Volks & David"
+            className="h-10 w-auto"
+          />
           <span className="text-lg font-black tracking-tight">
             <span className="text-[#21346E]">Volks</span>
             <span className="text-foreground/60 mx-0.5 font-light">&</span>
@@ -62,20 +69,33 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <LanguageToggle />
+          <DownloadAppButton variant="outline" size="sm" />
           {isAuthenticated ? (
             <Button
               className="text-white font-semibold shadow-md"
-              style={{ background: "linear-gradient(135deg, #21346E, #C8952E)", boxShadow: "0 4px 16px rgba(33,52,110,0.3)" }}
+              style={{
+                background: "linear-gradient(135deg, #21346E, #C8952E)",
+                boxShadow: "0 4px 16px rgba(33,52,110,0.3)",
+              }}
               onClick={() => navigate("/dashboard")}
             >
               Dashboard
             </Button>
           ) : (
             <>
-              <Button variant="outline" className="font-semibold" onClick={() => navigate("/login")}>Login</Button>
+              <Button
+                variant="outline"
+                className="font-semibold"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </Button>
               <Button
                 className="text-white font-semibold shadow-md hover:opacity-90 transition-opacity"
-                style={{ background: "linear-gradient(135deg, #C8952E, #B8862B)", boxShadow: "0 4px 16px rgba(200,149,46,0.35)" }}
+                style={{
+                  background: "linear-gradient(135deg, #C8952E, #B8862B)",
+                  boxShadow: "0 4px 16px rgba(200,149,46,0.35)",
+                }}
                 onClick={() => navigate("/register")}
               >
                 Get Started
@@ -84,8 +104,15 @@ export default function Navbar() {
           )}
         </div>
 
-        <button className="md:hidden p-2" onClick={() => setMobileOpen(!mobileOpen)}>
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        <button
+          className="md:hidden p-2"
+          onClick={() => setMobileOpen(!mobileOpen)}
+        >
+          {mobileOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
         </button>
       </div>
 
@@ -110,12 +137,38 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="flex gap-2 pt-2 border-t border-border mt-2">
+                <DownloadAppButton variant="outline" size="sm" showLabel />
                 {isAuthenticated ? (
-                  <Button className="w-full" onClick={() => { navigate("/dashboard"); setMobileOpen(false) }}>Dashboard</Button>
+                  <Button
+                    className="w-full"
+                    onClick={() => {
+                      navigate("/dashboard");
+                      setMobileOpen(false);
+                    }}
+                  >
+                    Dashboard
+                  </Button>
                 ) : (
                   <>
-                    <Button variant="outline" className="flex-1" onClick={() => { navigate("/login"); setMobileOpen(false) }}>Login</Button>
-                    <Button className="flex-1 bg-gradient-to-r from-primary to-accent" onClick={() => { navigate("/register"); setMobileOpen(false) }}>Get Started</Button>
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => {
+                        navigate("/login");
+                        setMobileOpen(false);
+                      }}
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      className="flex-1 bg-gradient-to-r from-primary to-accent"
+                      onClick={() => {
+                        navigate("/register");
+                        setMobileOpen(false);
+                      }}
+                    >
+                      Get Started
+                    </Button>
                   </>
                 )}
               </div>
@@ -124,5 +177,5 @@ export default function Navbar() {
         )}
       </AnimatePresence>
     </nav>
-  )
+  );
 }

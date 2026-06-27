@@ -1,7 +1,17 @@
-import { Link } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Facebook, Twitter, Linkedin, Instagram, Youtube, MessageCircle, Send, ArrowRight } from "lucide-react"
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import DownloadAppButton from "@/components/shared/DownloadAppButton";
+import {
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+  Youtube,
+  MessageCircle,
+  Send,
+  ArrowRight,
+} from "lucide-react";
 
 const footerLinks = {
   Services: [
@@ -26,15 +36,35 @@ const footerLinks = {
     { label: "Help Center", path: "/faq" },
     { label: "Consultations", path: "/pricing" },
   ],
-}
+};
 
 const socialLinks = [
-  { icon: Facebook, href: "https://facebook.com/volksanddavid", label: "Facebook" },
-  { icon: Twitter, href: "https://twitter.com/volksanddavid", label: "Twitter" },
-  { icon: Linkedin, href: "https://linkedin.com/company/volksanddavid", label: "LinkedIn" },
-  { icon: Instagram, href: "https://instagram.com/volksanddavid", label: "Instagram" },
-  { icon: Youtube, href: "https://youtube.com/@volksanddavid", label: "YouTube" },
-]
+  {
+    icon: Facebook,
+    href: "https://facebook.com/volksanddavid",
+    label: "Facebook",
+  },
+  {
+    icon: Twitter,
+    href: "https://twitter.com/volksanddavid",
+    label: "Twitter",
+  },
+  {
+    icon: Linkedin,
+    href: "https://linkedin.com/company/volksanddavid",
+    label: "LinkedIn",
+  },
+  {
+    icon: Instagram,
+    href: "https://instagram.com/volksanddavid",
+    label: "Instagram",
+  },
+  {
+    icon: Youtube,
+    href: "https://youtube.com/@volksanddavid",
+    label: "YouTube",
+  },
+];
 
 export default function Footer() {
   return (
@@ -44,23 +74,39 @@ export default function Footer() {
           {/* Brand + Newsletter */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <img src="/volksanddavid-logo.svg" alt="Volks & David" className="h-9 w-auto" />
+              <img
+                src="/volksanddavid-logo.svg"
+                alt="Volks & David"
+                className="h-9 w-auto"
+              />
               <span className="text-xl font-bold">
                 Volks <span className="text-primary">&</span> David
               </span>
             </Link>
             <p className="text-sm text-muted-foreground mb-6 max-w-xs">
-              Pakistan's #1 Premium Tax Filing & Financial Services Platform. FBR Authorised & SECP Registered.
+              Pakistan's #1 Premium Tax Filing & Financial Services Platform.
+              FBR Authorised & SECP Registered.
             </p>
 
             {/* WhatsApp number */}
             <div className="flex items-center gap-2 mb-6 text-sm">
-              <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ background: "#25D36620" }}>
-                <MessageCircle className="h-4 w-4" style={{ color: "#25D366" }} />
+              <div
+                className="h-8 w-8 rounded-full flex items-center justify-center"
+                style={{ background: "#25D36620" }}
+              >
+                <MessageCircle
+                  className="h-4 w-4"
+                  style={{ color: "#25D366" }}
+                />
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">WhatsApp</p>
-                <a href="https://wa.me/923100000377" target="_blank" rel="noopener noreferrer" className="font-semibold hover:text-primary transition-colors">
+                <a
+                  href="https://wa.me/923100000377"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold hover:text-primary transition-colors"
+                >
                   +92 310 0000377
                 </a>
               </div>
@@ -81,8 +127,17 @@ export default function Footer() {
               </div>
             </div>
 
+            {/* Download App */}
+            <div className="mt-6 mb-4">
+              <DownloadAppButton
+                variant="default"
+                size="default"
+                className="bg-gradient-to-r from-[#21346E] to-[#C8952E] text-white font-semibold shadow-md hover:opacity-90 transition-opacity w-full max-w-xs"
+              />
+            </div>
+
             {/* Social icons */}
-            <div className="flex items-center gap-3 mt-6">
+            <div className="flex items-center gap-3">
               {socialLinks.map(({ icon: Icon, href, label }) => (
                 <a
                   key={label}
@@ -105,7 +160,10 @@ export default function Footer() {
               <ul className="space-y-2.5">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <Link to={link.path} className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 group">
+                    <Link
+                      to={link.path}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 group"
+                    >
                       <ArrowRight className="h-3 w-3 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" />
                       {link.label}
                     </Link>
@@ -120,16 +178,24 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-border">
         <div className="container flex flex-col md:flex-row items-center justify-between gap-3 py-5 text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Volks & David. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} Volks & David. All rights
+            reserved.
+          </p>
           <div className="flex items-center gap-4">
-            {["SECP Registered", "FBR Partner", "PCI Compliant"].map((badge) => (
-              <span key={badge} className="text-xs px-3 py-1 rounded-full border border-border/60 bg-background/50">
-                {badge}
-              </span>
-            ))}
+            {["SECP Registered", "FBR Partner", "PCI Compliant"].map(
+              (badge) => (
+                <span
+                  key={badge}
+                  className="text-xs px-3 py-1 rounded-full border border-border/60 bg-background/50"
+                >
+                  {badge}
+                </span>
+              ),
+            )}
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }
