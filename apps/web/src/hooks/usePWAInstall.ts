@@ -9,7 +9,6 @@ export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [canInstall, setCanInstall] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -23,12 +22,10 @@ export function usePWAInstall() {
     const onBeforeInstall = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setCanInstall(true);
     };
 
     const onAppInstalled = () => {
       setIsInstalled(true);
-      setCanInstall(false);
       setDeferredPrompt(null);
     };
 
@@ -42,18 +39,17 @@ export function usePWAInstall() {
   }, []);
 
   const install = useCallback(async () => {
-    if (!deferredPrompt) return;
-
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-
-    if (outcome === "accepted") {
-      setIsInstalled(true);
-      setCanInstall(false);
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        setIsInstalled(true);
+      }
+      setDeferredPrompt(null);
+      return true;
     }
-
-    setDeferredPrompt(null);
+    return false;
   }, [deferredPrompt]);
 
-  return { canInstall, isInstalled, install };
+  return { canInstall: !!deferredPrompt, isInstalled, install };
 }
